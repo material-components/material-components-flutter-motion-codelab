@@ -1,7 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reply/custom_transition_page.dart';
 import 'package:reply/home.dart';
 import 'package:reply/search_page.dart';
 
@@ -46,14 +46,13 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             key: navigatorKey,
             onPopPage: _handlePopPage,
             pages: [
-              // TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
-              const CustomTransitionPage(
-                transitionKey: ValueKey('Home'),
+              const SharedAxisTransitionPageWrapper(
+                transitionKey: ValueKey('home'),
                 screen: HomePage(),
               ),
               if (routePath is ReplySearchPath)
-                const CustomTransitionPage(
-                  transitionKey: ValueKey('Search'),
+                const SharedAxisTransitionPageWrapper(
+                  transitionKey: ValueKey('search'),
                   screen: SearchPage(),
                 ),
             ],
@@ -95,7 +94,32 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
-// TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
+class SharedAxisTransitionPageWrapper extends Page {
+  const SharedAxisTransitionPageWrapper(
+      {required this.screen, required this.transitionKey})
+      : super(key: transitionKey);
+
+  final Widget screen;
+  final ValueKey transitionKey;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+        settings: this,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SharedAxisTransition(
+            fillColor: Theme.of(context).cardColor,
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.scaled,
+            child: child,
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return screen;
+        });
+  }
+}
 
 class ReplyRouteInformationParser
     extends RouteInformationParser<ReplyRoutePath> {
