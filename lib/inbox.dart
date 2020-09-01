@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'layout/adaptive.dart';
 import 'mail_card_preview.dart';
 import 'model/email_store.dart';
 
@@ -14,10 +13,7 @@ class InboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = isDisplayDesktop(context);
-    final isTablet = isDisplaySmallDesktop(context);
-    final startPadding = isTablet ? 60.0 : isDesktop ? 120.0 : 4.0;
-    final endPadding = isTablet ? 30.0 : isDesktop ? 60.0 : 4.0;
+    final horizontalPadding = 4.0;
 
     return Consumer<EmailStore>(
       builder: (context, model, child) {
@@ -35,9 +31,8 @@ class InboxPage extends StatelessWidget {
                       )
                     : ListView(
                         padding: EdgeInsetsDirectional.only(
-                          start: startPadding,
-                          end: endPadding,
-                          top: isDesktop ? 28 : 0,
+                          start: horizontalPadding,
+                          end: horizontalPadding,
                         ),
                         children: [
                           for (int index = 0;
@@ -56,25 +51,6 @@ class InboxPage extends StatelessWidget {
                         ],
                       ),
               ),
-              if (isDesktop) ...[
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(top: 14),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          Provider.of<EmailStore>(
-                            context,
-                            listen: false,
-                          ).onSearchPage = true;
-                        },
-                      ),
-                      SizedBox(width: isTablet ? 30 : 60),
-                    ],
-                  ),
-                ),
-              ]
             ],
           ),
         );
