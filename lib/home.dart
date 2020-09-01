@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
@@ -372,6 +373,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: Container(
                           color: Colors.transparent,
                           child: _BottomAppBarActionItems(
+                            drawerController: _drawerController,
                             drawerVisible: _bottomDrawerVisible,
                           ),
                         ),
@@ -395,11 +397,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 }
 
-class _BottomAppBarActionItems extends StatelessWidget {
-  const _BottomAppBarActionItems({@required this.drawerVisible})
-      : assert(drawerVisible != null);
+enum AnimationSpeedSetting { normal, slow, slower, slowest }
 
+class _BottomAppBarActionItems extends StatefulWidget {
+  const _BottomAppBarActionItems({
+    @required this.drawerController,
+    @required this.drawerVisible,
+  })  : assert(drawerVisible != null),
+        assert(drawerController != null);
+
+  final AnimationController drawerController;
   final bool drawerVisible;
+
+  @override
+  _BottomAppBarActionItemsState createState() =>
+      _BottomAppBarActionItemsState();
+}
+
+class _BottomAppBarActionItemsState extends State<_BottomAppBarActionItems> {
+  static Map<int, AnimationSpeedSetting> _animationSettingMap = {
+    1: AnimationSpeedSetting.normal,
+    5: AnimationSpeedSetting.slow,
+    10: AnimationSpeedSetting.slower,
+    15: AnimationSpeedSetting.slowest,
+  };
+
+  AnimationSpeedSetting _animationSpeedSetting =
+      _animationSettingMap[timeDilation];
+  ThemeMode _theme;
+
+  @override
+  void initState() {
+    super.initState();
+    _theme = Provider.of<EmailStore>(context, listen: false).themeMode;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -425,14 +456,123 @@ class _BottomAppBarActionItems extends StatelessWidget {
 
         return _FadeThroughTransitionSwitcher(
           fillColor: Colors.transparent,
-          child: drawerVisible
+          child: widget.drawerVisible
               ? Align(
                   key: UniqueKey(),
                   alignment: Alignment.centerRight,
                   child: IconButton(
                     icon: const Icon(Icons.settings),
                     color: ReplyColors.white50,
-                    onPressed: () {},
+                    onPressed: () async {
+                      var radius = Radius.circular(12);
+                      widget.drawerController.reverse();
+                      showModalBottomSheet(
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: radius,
+                              topLeft: radius,
+                            ),
+                          ),
+                          builder: (context) {
+                            return StatefulBuilder(builder: (context, state) {
+                              void setTheme(ThemeMode theme) {
+                                state(() {
+                                  _theme = theme;
+                                });
+                                Provider.of<EmailStore>(context, listen: false)
+                                    .themeMode = theme;
+                              }
+
+                              void setAnimationSpeed(
+                                  AnimationSpeedSetting animationSpeed) {
+                                state(() {
+                                  _animationSpeedSetting = animationSpeed;
+                                });
+
+                                switch (_animationSpeedSetting) {
+                                  case AnimationSpeedSetting.normal:
+                                    timeDilation = 1.0;
+                                    break;
+                                  case AnimationSpeedSetting.slow:
+                                    timeDilation = 5.0;
+                                    break;
+                                  case AnimationSpeedSetting.slower:
+                                    timeDilation = 10.0;
+                                    break;
+                                  case AnimationSpeedSetting.slowest:
+                                    timeDilation = 15.0;
+                                    break;
+                                }
+                              }
+
+                              return Container(
+                                color: Theme.of(context)
+                                    .bottomSheetTheme
+                                    .backgroundColor,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      ExpansionTile(
+                                        title: Text('Theme'),
+                                        children: [
+                                          RadioListTile(
+                                            title: Text('Light'),
+                                            value: ThemeMode.light,
+                                            groupValue: _theme,
+                                            onChanged: setTheme,
+                                          ),
+                                          RadioListTile(
+                                            title: Text('Dark'),
+                                            value: ThemeMode.dark,
+                                            groupValue: _theme,
+                                            onChanged: setTheme,
+                                          ),
+                                          RadioListTile(
+                                            title: Text('System default'),
+                                            value: ThemeMode.system,
+                                            groupValue: _theme,
+                                            onChanged: setTheme,
+                                          ),
+                                        ],
+                                      ),
+                                      ExpansionTile(
+                                        title: Text('Animation Speed'),
+                                        children: [
+                                          RadioListTile(
+                                            title: Text('1x'),
+                                            value: AnimationSpeedSetting.normal,
+                                            groupValue: _animationSpeedSetting,
+                                            onChanged: setAnimationSpeed,
+                                          ),
+                                          RadioListTile(
+                                            title: Text('5x'),
+                                            value: AnimationSpeedSetting.slow,
+                                            groupValue: _animationSpeedSetting,
+                                            onChanged: setAnimationSpeed,
+                                          ),
+                                          RadioListTile(
+                                            title: Text('10x'),
+                                            value: AnimationSpeedSetting.slower,
+                                            groupValue: _animationSpeedSetting,
+                                            onChanged: setAnimationSpeed,
+                                          ),
+                                          RadioListTile(
+                                            title: Text('15x'),
+                                            value:
+                                                AnimationSpeedSetting.slowest,
+                                            groupValue: _animationSpeedSetting,
+                                            onChanged: setAnimationSpeed,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                          });
+                    },
                   ),
                 )
               : onMailView

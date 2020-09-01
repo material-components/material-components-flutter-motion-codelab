@@ -38,28 +38,32 @@ class ReplyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<EmailStore>.value(value: EmailStore()),
       ],
-      child: MaterialApp(
-        navigatorKey: rootNavKey,
-        title: 'Reply',
-        debugShowCheckedModeBanner: false,
-        darkTheme: _buildReplyDarkTheme(context),
-        theme: _buildReplyLightTheme(context),
-        initialRoute: homeRoute,
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case homeRoute:
-              return MaterialPageRoute<void>(
-                builder: (context) => const HomePage(),
-                settings: settings,
-              );
-              break;
-            case composeRoute:
-              return createComposeRoute(settings);
-              break;
-          }
-          return null;
-        },
-      ),
+      child: Selector<EmailStore, ThemeMode>(
+          selector: (context, emailStore) => emailStore.themeMode,
+          builder: (context, themeMode, child) {
+            return MaterialApp(
+              navigatorKey: rootNavKey,
+              themeMode: themeMode,
+              title: 'Reply',
+              darkTheme: _buildReplyDarkTheme(context),
+              theme: _buildReplyLightTheme(context),
+              initialRoute: homeRoute,
+              onGenerateRoute: (settings) {
+                switch (settings.name) {
+                  case homeRoute:
+                    return MaterialPageRoute<void>(
+                      builder: (context) => const HomePage(),
+                      settings: settings,
+                    );
+                    break;
+                  case composeRoute:
+                    return createComposeRoute(settings);
+                    break;
+                }
+                return null;
+              },
+            );
+          }),
     );
   }
 }
