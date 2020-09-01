@@ -78,7 +78,7 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
       modalBackgroundColor: Colors.white.withOpacity(0.4),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.blue700,
+      backgroundColor: ReplyColors.white50,
       selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
       selectedLabelTextStyle:
           GoogleFonts.workSansTextTheme().headline5.copyWith(
@@ -126,7 +126,7 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
       modalBackgroundColor: Colors.black.withOpacity(0.8),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.darkBottomAppBarBackground,
+      backgroundColor: ReplyColors.darkDrawerBackground,
       selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
       selectedLabelTextStyle:
           GoogleFonts.workSansTextTheme().headline5.copyWith(

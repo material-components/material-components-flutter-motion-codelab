@@ -89,7 +89,7 @@ class _BottomSheetMenuState extends State<BottomSheetMenu> {
 
       return Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).bottomSheetTheme.backgroundColor,
+          color: Theme.of(context).navigationRailTheme.backgroundColor,
           borderRadius: modalBorder,
         ),
         child: SingleChildScrollView(
