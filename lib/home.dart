@@ -20,140 +20,75 @@ final mobileMailNavKey = GlobalKey<NavigatorState>();
 const double _kFlingVelocity = 2.0;
 const _kAnimationDuration = Duration(milliseconds: 300);
 
-class AdaptiveNav extends StatefulWidget {
-  const AdaptiveNav({Key key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage();
 
   @override
-  _AdaptiveNavState createState() => _AdaptiveNavState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _AdaptiveNavState extends State<AdaptiveNav> {
-  int _selectedIndex = 0;
-
-  Widget _currentInbox;
-  UniqueKey _inboxKey = UniqueKey();
-
-  @override
-  void initState() {
-    super.initState();
-    _currentInbox = InboxPage(
-      key: _inboxKey,
-      destination: 'Inbox',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final _navigationDestinations = <_Destination>[
-      _Destination(
-        name: 'Inbox',
-        icon: '$_iconAssetLocation/twotone_inbox.png',
-        index: 0,
-      ),
-      _Destination(
-        name: 'Starred',
-        icon: '$_iconAssetLocation/twotone_star.png',
-        index: 1,
-      ),
-      _Destination(
-        name: 'Sent',
-        icon: '$_iconAssetLocation/twotone_send.png',
-        index: 2,
-      ),
-      _Destination(
-        name: 'Trash',
-        icon: '$_iconAssetLocation/twotone_delete.png',
-        index: 3,
-      ),
-      _Destination(
-        name: 'Spam',
-        icon: '$_iconAssetLocation/twotone_error.png',
-        index: 4,
-      ),
-      _Destination(
-        name: 'Drafts',
-        icon: '$_iconAssetLocation/twotone_drafts.png',
-        index: 5,
-      ),
-    ];
-
-    final _folders = <String, String>{
-      'Receipts': _folderIconAssetLocation,
-      'Pine Elementary': _folderIconAssetLocation,
-      'Taxes': _folderIconAssetLocation,
-      'Vacation': _folderIconAssetLocation,
-      'Mortgage': _folderIconAssetLocation,
-      'Freelance': _folderIconAssetLocation,
-    };
-
-    return _MobileNav(
-      selectedIndex: _selectedIndex,
-      currentInbox: _currentInbox,
-      destinations: _navigationDestinations,
-      folders: _folders,
-      onItemTapped: _onDestinationSelected,
-    );
-  }
-
-  void _onDestinationSelected(int index, String destination) {
-    var emailStore = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    );
-
-    if (emailStore.currentlySelectedInbox != destination) {
-      _inboxKey = UniqueKey();
-    }
-
-    emailStore.currentlySelectedInbox = destination;
-
-    if (emailStore.onMailView) {
-      mobileMailNavKey.currentState.pop();
-
-      emailStore.currentlySelectedEmailId = -1;
-    }
-
-    setState(() {
-      _selectedIndex = index;
-      _currentInbox = InboxPage(
-        key: _inboxKey,
-        destination: destination,
-      );
-    });
-  }
-}
-
-class _MobileNav extends StatefulWidget {
-  const _MobileNav({
-    this.selectedIndex,
-    this.currentInbox,
-    this.destinations,
-    this.folders,
-    this.onItemTapped,
-  });
-
-  final int selectedIndex;
-  final Widget currentInbox;
-  final List<_Destination> destinations;
-  final Map<String, String> folders;
-  final void Function(int, String) onItemTapped;
-
-  @override
-  _MobileNavState createState() => _MobileNavState();
-}
-
-class _MobileNavState extends State<_MobileNav> with TickerProviderStateMixin {
-  final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   AnimationController _drawerController;
   AnimationController _dropArrowController;
   AnimationController _bottomAppBarController;
   Animation<double> _drawerCurve;
   Animation<double> _dropArrowCurve;
   Animation<double> _bottomAppBarCurve;
+  int _selectedIndex = 0;
+  Widget _currentInbox;
+  UniqueKey _inboxKey = UniqueKey();
+  final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
+  final _navigationDestinations = <_Destination>[
+    _Destination(
+      name: 'Inbox',
+      icon: '$_iconAssetLocation/twotone_inbox.png',
+      index: 0,
+    ),
+    _Destination(
+      name: 'Starred',
+      icon: '$_iconAssetLocation/twotone_star.png',
+      index: 1,
+    ),
+    _Destination(
+      name: 'Sent',
+      icon: '$_iconAssetLocation/twotone_send.png',
+      index: 2,
+    ),
+    _Destination(
+      name: 'Trash',
+      icon: '$_iconAssetLocation/twotone_delete.png',
+      index: 3,
+    ),
+    _Destination(
+      name: 'Spam',
+      icon: '$_iconAssetLocation/twotone_error.png',
+      index: 4,
+    ),
+    _Destination(
+      name: 'Drafts',
+      icon: '$_iconAssetLocation/twotone_drafts.png',
+      index: 5,
+    ),
+  ];
+
+  final _folders = <String, String>{
+    'Receipts': _folderIconAssetLocation,
+    'Pine Elementary': _folderIconAssetLocation,
+    'Taxes': _folderIconAssetLocation,
+    'Vacation': _folderIconAssetLocation,
+    'Mortgage': _folderIconAssetLocation,
+    'Freelance': _folderIconAssetLocation,
+  };
 
   @override
   void initState() {
     super.initState();
+
+    _currentInbox = InboxPage(
+      key: _inboxKey,
+      destination: 'Inbox',
+    );
+
     _drawerController = AnimationController(
       duration: _kAnimationDuration,
       value: 0,
@@ -204,6 +139,33 @@ class _MobileNavState extends State<_MobileNav> with TickerProviderStateMixin {
     _dropArrowController.dispose();
     _bottomAppBarController.dispose();
     super.dispose();
+  }
+
+  void _onDestinationSelected(int index, String destination) {
+    var emailStore = Provider.of<EmailStore>(
+      context,
+      listen: false,
+    );
+
+    if (emailStore.currentlySelectedInbox != destination) {
+      _inboxKey = UniqueKey();
+    }
+
+    emailStore.currentlySelectedInbox = destination;
+
+    if (emailStore.onMailView) {
+      mobileMailNavKey.currentState.pop();
+
+      emailStore.currentlySelectedEmailId = -1;
+    }
+
+    setState(() {
+      _selectedIndex = index;
+      _currentInbox = InboxPage(
+        key: _inboxKey,
+        destination: destination,
+      );
+    });
   }
 
   bool get _bottomDrawerVisible {
@@ -298,7 +260,7 @@ class _MobileNavState extends State<_MobileNav> with TickerProviderStateMixin {
         NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
           child: _MailNavigator(
-            child: widget.currentInbox,
+            child: _currentInbox,
           ),
         ),
         GestureDetector(
@@ -330,13 +292,13 @@ class _MobileNavState extends State<_MobileNav> with TickerProviderStateMixin {
               onVerticalDragUpdate: _handleDragUpdate,
               onVerticalDragEnd: _handleDragEnd,
               leading: _BottomDrawerDestinations(
-                destinations: widget.destinations,
+                destinations: _navigationDestinations,
                 drawerController: _drawerController,
                 dropArrowController: _dropArrowController,
-                selectedIndex: widget.selectedIndex,
-                onItemTapped: widget.onItemTapped,
+                selectedIndex: _selectedIndex,
+                onItemTapped: _onDestinationSelected,
               ),
-              trailing: _BottomDrawerFolderSection(folders: widget.folders),
+              trailing: _BottomDrawerFolderSection(folders: _folders),
             ),
           ),
         ),
@@ -396,7 +358,7 @@ class _MobileNavState extends State<_MobileNav> with TickerProviderStateMixin {
                               duration: _kAnimationDuration,
                               curve: standardEasing,
                               child: Text(
-                                widget.destinations[widget.selectedIndex].name,
+                                _navigationDestinations[_selectedIndex].name,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1

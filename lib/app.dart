@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'adaptive_nav.dart';
 import 'colors.dart';
 import 'compose_page.dart';
+import 'home.dart';
 import 'layout/letter_spacing.dart';
 import 'model/email_store.dart';
 
@@ -50,7 +50,7 @@ class ReplyApp extends StatelessWidget {
           switch (settings.name) {
             case homeRoute:
               return MaterialPageRoute<void>(
-                builder: (context) => const AdaptiveNav(),
+                builder: (context) => const HomePage(),
                 settings: settings,
               );
               break;
