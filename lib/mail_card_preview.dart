@@ -9,7 +9,8 @@ import 'model/email_model.dart';
 import 'model/email_store.dart';
 import 'profile_avatar.dart';
 
-const _iconAssetLocation = 'assets/reply/icons';
+const _assetsPackage = 'flutter_gallery_assets';
+const _iconAssetLocation = 'reply/icons';
 
 class MailPreviewCard extends StatelessWidget {
   const MailPreviewCard({
@@ -141,7 +142,8 @@ class _DismissibleContainer extends StatelessWidget {
         color: Colors.transparent,
         child: ImageIcon(
           AssetImage(
-            'assets/reply/icons/$icon.png',
+            'reply/icons/$icon.png',
+            package: 'flutter_gallery_assets',
           ),
           size: 36,
           color: iconColor,
@@ -267,7 +269,8 @@ class _PicturePreview extends StatelessWidget {
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 4),
               child: Image.asset(
-                'assets/reply/attachments/paris_${index + 1}.jpg',
+                'reply/attachments/paris_${index + 1}.jpg',
+                package: 'flutter_gallery_assets',
               ),
             ),
         ],
@@ -304,6 +307,7 @@ class _MailPreviewActionBar extends StatelessWidget {
             icon: ImageIcon(
               const AssetImage(
                 '$_iconAssetLocation/twotone_star.png',
+                package: _assetsPackage,
               ),
               color: starredIconColor,
             ),
@@ -313,6 +317,7 @@ class _MailPreviewActionBar extends StatelessWidget {
             icon: ImageIcon(
               const AssetImage(
                 '$_iconAssetLocation/twotone_delete.png',
+                package: _assetsPackage,
               ),
               color: color,
             ),

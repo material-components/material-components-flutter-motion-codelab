@@ -15,7 +15,8 @@ import 'model/email_store.dart';
 import 'profile_avatar.dart';
 import 'search_page.dart';
 
-const _iconAssetLocation = 'assets/reply/icons';
+const _assetsPackage = 'flutter_gallery_assets';
+const _iconAssetLocation = 'reply/icons';
 const _folderIconAssetLocation = '$_iconAssetLocation/twotone_folder.png';
 final desktopMailNavKey = GlobalKey<NavigatorState>();
 final mobileMailNavKey = GlobalKey<NavigatorState>();
@@ -246,6 +247,7 @@ class _DesktopNavState extends State<_DesktopNav>
                                 child: ImageIcon(
                                   AssetImage(
                                     destination.icon,
+                                    package: _assetsPackage,
                                   ),
                                 ),
                               ),
@@ -372,7 +374,7 @@ class _NavigationRailHeader extends StatelessWidget {
                     children: const [
                       SizedBox(width: 36),
                       ProfileAvatar(
-                        avatar: 'assets/reply/avatars/avatar_2.jpg',
+                        avatar: 'reply/avatars/avatar_2.jpg',
                         radius: 16,
                       ),
                       SizedBox(width: 12),
@@ -452,6 +454,7 @@ class _NavigationRailFolderSection extends StatelessWidget {
                       ImageIcon(
                         AssetImage(
                           folders[folder],
+                          package: _assetsPackage,
                         ),
                         color:
                             navigationRailTheme.unselectedLabelTextStyle.color,
@@ -835,6 +838,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                           icon: ImageIcon(
                             const AssetImage(
                               '$_iconAssetLocation/twotone_star.png',
+                              package: _assetsPackage,
                             ),
                             color: starIconColor,
                           ),
@@ -854,6 +858,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                           icon: const ImageIcon(
                             AssetImage(
                               '$_iconAssetLocation/twotone_delete.png',
+                              package: _assetsPackage,
                             ),
                           ),
                           onPressed: () {
@@ -936,6 +941,7 @@ class _BottomDrawerDestinations extends StatelessWidget {
               leading: ImageIcon(
                 AssetImage(
                   destination.icon,
+                  package: _assetsPackage,
                 ),
                 color: destination.index == selectedIndex
                     ? theme.colorScheme.secondary
@@ -991,6 +997,7 @@ class _BottomDrawerFolderSection extends StatelessWidget {
               leading: ImageIcon(
                 AssetImage(
                   folders[folder],
+                  package: _assetsPackage,
                 ),
                 color: navigationRailTheme.unselectedLabelTextStyle.color,
               ),
@@ -1056,7 +1063,8 @@ class _ReplyLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ImageIcon(
       AssetImage(
-        'assets/reply/reply_logo.png',
+        'reply/reply_logo.png',
+        package: _assetsPackage,
       ),
       size: 32,
       color: ReplyColors.white50,

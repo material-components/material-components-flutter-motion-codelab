@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'email_model.dart';
 
-const _avatarsLocation = 'assets/reply/avatars';
+const _avatarsLocation = 'reply/avatars';
 
 class EmailStore with ChangeNotifier {
   final _categories = <String, Set<Email>>{

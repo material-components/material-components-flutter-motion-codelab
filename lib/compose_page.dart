@@ -11,7 +11,7 @@ class ComposePage extends StatelessWidget {
     var _senderEmail = 'flutterfan@gmail.com';
     var _subject = '';
     var _recipient = 'Recipient';
-    var _recipientAvatar = 'assets/reply/avatars/avatar_0.jpg';
+    var _recipientAvatar = 'reply/avatars/avatar_0.jpg';
 
     final emailStore = Provider.of<EmailStore>(context);
 
@@ -129,7 +129,8 @@ class _SubjectRowState extends State<_SubjectRow> {
             icon: IconButton(
               icon: ImageIcon(
                 const AssetImage(
-                  'assets/reply/icons/twotone_send.png',
+                  'reply/icons/twotone_send.png',
+                  package: 'flutter_gallery_assets',
                 ),
                 color: colorScheme.onSurface,
               ),
@@ -246,6 +247,7 @@ class _RecipientsRow extends StatelessWidget {
                   avatar: CircleAvatar(
                     backgroundImage: AssetImage(
                       '$avatar',
+                      package: 'flutter_gallery_assets',
                     ),
                   ),
                   label: Text(
