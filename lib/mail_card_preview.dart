@@ -3,14 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'colors.dart';
-import 'layout/adaptive.dart';
 import 'mail_view_page.dart';
 import 'model/email_model.dart';
 import 'model/email_store.dart';
 import 'profile_avatar.dart';
-
-const _assetsPackage = 'flutter_gallery_assets';
-const _iconAssetLocation = 'reply/icons';
 
 class MailPreviewCard extends StatelessWidget {
   const MailPreviewCard({
@@ -43,7 +39,6 @@ class MailPreviewCard extends StatelessWidget {
       closedElevation: 0,
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
-        final isDesktop = isDisplayDesktop(context);
         final colorScheme = theme.colorScheme;
         final mailPreview = _MailPreview(
           id: id,
@@ -58,56 +53,52 @@ class MailPreviewCard extends StatelessWidget {
             ).currentlySelectedInbox ==
             'Starred';
 
-        if (isDesktop) {
-          return mailPreview;
-        } else {
-          return Dismissible(
-            key: ObjectKey(email),
-            dismissThresholds: const {
-              DismissDirection.startToEnd: 0.8,
-              DismissDirection.endToStart: 0.4,
-            },
-            onDismissed: (direction) {
-              switch (direction) {
-                case DismissDirection.endToStart:
-                  if (onStarredInbox) {
-                    onStar();
-                  }
-                  break;
-                case DismissDirection.startToEnd:
-                  onDelete();
-                  break;
-                default:
-              }
-            },
-            background: _DismissibleContainer(
-              icon: 'twotone_delete',
-              backgroundColor: colorScheme.primary,
-              iconColor: ReplyColors.blue50,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsetsDirectional.only(start: 20),
-            ),
-            confirmDismiss: (direction) async {
-              if (direction == DismissDirection.endToStart) {
+        return Dismissible(
+          key: ObjectKey(email),
+          dismissThresholds: const {
+            DismissDirection.startToEnd: 0.8,
+            DismissDirection.endToStart: 0.4,
+          },
+          onDismissed: (direction) {
+            switch (direction) {
+              case DismissDirection.endToStart:
                 if (onStarredInbox) {
-                  return true;
+                  onStar();
                 }
-                onStar();
-                return false;
-              } else {
+                break;
+              case DismissDirection.startToEnd:
+                onDelete();
+                break;
+              default:
+            }
+          },
+          background: _DismissibleContainer(
+            icon: 'twotone_delete',
+            backgroundColor: colorScheme.primary,
+            iconColor: ReplyColors.blue50,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsetsDirectional.only(start: 20),
+          ),
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              if (onStarredInbox) {
                 return true;
               }
-            },
-            secondaryBackground: _DismissibleContainer(
-              icon: 'twotone_star',
-              backgroundColor: colorScheme.secondary,
-              iconColor: ReplyColors.black900,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsetsDirectional.only(end: 20),
-            ),
-            child: mailPreview,
-          );
-        }
+              onStar();
+              return false;
+            } else {
+              return true;
+            }
+          },
+          secondaryBackground: _DismissibleContainer(
+            icon: 'twotone_star',
+            backgroundColor: colorScheme.secondary,
+            iconColor: ReplyColors.black900,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsetsDirectional.only(end: 20),
+          ),
+          child: mailPreview,
+        );
       },
     );
   }
@@ -294,44 +285,8 @@ class _MailPreviewActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = isDark ? ReplyColors.white50 : ReplyColors.blue600;
-    final isDesktop = isDisplayDesktop(context);
-    final starredIconColor =
-        isStarred ? Theme.of(context).colorScheme.secondary : color;
-
     return Row(
       children: [
-        if (isDesktop) ...[
-          IconButton(
-            icon: ImageIcon(
-              const AssetImage(
-                '$_iconAssetLocation/twotone_star.png',
-                package: _assetsPackage,
-              ),
-              color: starredIconColor,
-            ),
-            onPressed: onStar,
-          ),
-          IconButton(
-            icon: ImageIcon(
-              const AssetImage(
-                '$_iconAssetLocation/twotone_delete.png',
-                package: _assetsPackage,
-              ),
-              color: color,
-            ),
-            onPressed: onDelete,
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: color,
-            ),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 12),
-        ],
         ProfileAvatar(avatar: avatar),
       ],
     );

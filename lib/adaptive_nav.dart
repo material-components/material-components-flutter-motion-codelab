@@ -10,15 +10,12 @@ import 'bottom_drawer.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'inbox.dart';
-import 'layout/adaptive.dart';
 import 'model/email_store.dart';
-import 'profile_avatar.dart';
 import 'search_page.dart';
 
 const _assetsPackage = 'flutter_gallery_assets';
 const _iconAssetLocation = 'reply/icons';
 const _folderIconAssetLocation = '$_iconAssetLocation/twotone_folder.png';
-final desktopMailNavKey = GlobalKey<NavigatorState>();
 final mobileMailNavKey = GlobalKey<NavigatorState>();
 const double _kFlingVelocity = 2.0;
 const _kAnimationDuration = Duration(milliseconds: 300);
@@ -47,9 +44,6 @@ class _AdaptiveNavState extends State<AdaptiveNav> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = isDisplayDesktop(context);
-    final isTablet = isDisplaySmallDesktop(context);
-
     final _navigationDestinations = <_Destination>[
       _Destination(
         name: 'Inbox',
@@ -92,24 +86,13 @@ class _AdaptiveNavState extends State<AdaptiveNav> {
       'Freelance': _folderIconAssetLocation,
     };
 
-    if (isDesktop) {
-      return _DesktopNav(
-        selectedIndex: _selectedIndex,
-        currentInbox: _currentInbox,
-        extended: !isTablet ? true : false,
-        destinations: _navigationDestinations,
-        folders: _folders,
-        onItemTapped: _onDestinationSelected,
-      );
-    } else {
-      return _MobileNav(
-        selectedIndex: _selectedIndex,
-        currentInbox: _currentInbox,
-        destinations: _navigationDestinations,
-        folders: _folders,
-        onItemTapped: _onDestinationSelected,
-      );
-    }
+    return _MobileNav(
+      selectedIndex: _selectedIndex,
+      currentInbox: _currentInbox,
+      destinations: _navigationDestinations,
+      folders: _folders,
+      onItemTapped: _onDestinationSelected,
+    );
   }
 
   void _onDestinationSelected(int index, String destination) {
@@ -118,24 +101,14 @@ class _AdaptiveNavState extends State<AdaptiveNav> {
       listen: false,
     );
 
-    final isDesktop = isDisplayDesktop(context);
-
     if (emailStore.currentlySelectedInbox != destination) {
       _inboxKey = UniqueKey();
     }
 
     emailStore.currentlySelectedInbox = destination;
 
-    if (isDesktop) {
-      while (desktopMailNavKey.currentState.canPop()) {
-        desktopMailNavKey.currentState.pop();
-      }
-    }
-
     if (emailStore.onMailView) {
-      if (!isDesktop) {
-        mobileMailNavKey.currentState.pop();
-      }
+      mobileMailNavKey.currentState.pop();
 
       emailStore.currentlySelectedEmailId = -1;
     }
@@ -147,335 +120,6 @@ class _AdaptiveNavState extends State<AdaptiveNav> {
         destination: destination,
       );
     });
-  }
-}
-
-class _DesktopNav extends StatefulWidget {
-  const _DesktopNav({
-    Key key,
-    this.selectedIndex,
-    this.currentInbox,
-    this.extended,
-    this.destinations,
-    this.folders,
-    this.onItemTapped,
-  }) : super(key: key);
-
-  final int selectedIndex;
-  final bool extended;
-  final Widget currentInbox;
-  final List<_Destination> destinations;
-  final Map<String, String> folders;
-  final void Function(int, String) onItemTapped;
-
-  @override
-  _DesktopNavState createState() => _DesktopNavState();
-}
-
-class _DesktopNavState extends State<_DesktopNav>
-    with SingleTickerProviderStateMixin {
-  bool _isExtended;
-  bool _hasWidgetUpdated = false;
-  AnimationController _controller;
-  Animation<double> _curve;
-
-  @override
-  void initState() {
-    super.initState();
-    _isExtended = widget.extended;
-    _controller =
-        AnimationController(duration: _kAnimationDuration, vsync: this)
-          ..addListener(
-            () {
-              if (_controller.isCompleted) {
-                _controller.reset();
-                setState(() {
-                  if (_hasWidgetUpdated) {
-                    _isExtended = widget.extended;
-                    _hasWidgetUpdated = false;
-                  } else {
-                    _isExtended = !_isExtended;
-                  }
-                });
-              }
-            },
-          );
-    _curve = CurvedAnimation(
-      parent: _controller,
-      curve: standardEasing,
-      reverseCurve: standardEasing.flipped,
-    );
-  }
-
-  @override
-  void didUpdateWidget(_DesktopNav oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.extended != widget.extended) {
-      onLogoTapped();
-      _hasWidgetUpdated = true;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Container(
-                color: Theme.of(context).navigationRailTheme.backgroundColor,
-                child: SingleChildScrollView(
-                  clipBehavior: Clip.antiAlias,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: NavigationRail(
-                        destinations: [
-                          for (var destination in widget.destinations)
-                            NavigationRailDestination(
-                              icon: Material(
-                                color: Colors.transparent,
-                                child: ImageIcon(
-                                  AssetImage(
-                                    destination.icon,
-                                    package: _assetsPackage,
-                                  ),
-                                ),
-                              ),
-                              label: Text(destination.name),
-                            ),
-                        ],
-                        extended: _isExtended,
-                        labelType: NavigationRailLabelType.none,
-                        leading: _NavigationRailHeader(
-                          extended: _isExtended,
-                          animation: _curve,
-                          onLogoTapped: onLogoTapped,
-                        ),
-                        trailing: Visibility(
-                          visible: _isExtended,
-                          maintainState: true,
-                          maintainAnimation: true,
-                          child: AnimatedOpacity(
-                            duration: _kAnimationDuration,
-                            opacity: _isExtended ? 1 : 0,
-                            child: _NavigationRailFolderSection(
-                              folders: widget.folders,
-                            ),
-                          ),
-                        ),
-                        selectedIndex: widget.selectedIndex,
-                        onDestinationSelected: (index) {
-                          widget.onItemTapped(
-                            index,
-                            widget.destinations[index].name,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: _SharedAxisTransitionSwitcher(
-              defaultChild: _MailNavigator(
-                child: widget.currentInbox,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void onLogoTapped() {
-    if (_isExtended) {
-      _controller.animateTo(0.5, curve: standardEasing);
-    } else {
-      _controller.animateTo(1, curve: standardEasing);
-    }
-  }
-}
-
-class _NavigationRailHeader extends StatelessWidget {
-  const _NavigationRailHeader({
-    @required this.extended,
-    @required this.animation,
-    @required this.onLogoTapped,
-  })  : assert(extended != null),
-        assert(animation != null),
-        assert(onLogoTapped != null);
-
-  final bool extended;
-  final Animation<double> animation;
-  final VoidCallback onLogoTapped;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 56,
-          child: Row(
-            children: [
-              const SizedBox(width: 12),
-              SizedBox(
-                width: extended ? 120 : 58,
-                child: InkWell(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      RotationTransition(
-                        turns: Tween(
-                          begin: extended ? 0.0 : 0.5,
-                          end: 1.0,
-                        ).animate(animation),
-                        child: const Icon(
-                          Icons.arrow_left,
-                          color: ReplyColors.white50,
-                          size: 16,
-                        ),
-                      ),
-                      const _ReplyLogo(),
-                      const SizedBox(width: 10),
-                      if (extended)
-                        Text(
-                          'REPLY',
-                          style: textTheme.bodyText1.copyWith(
-                            color: ReplyColors.white50,
-                          ),
-                        ),
-                    ],
-                  ),
-                  onTap: onLogoTapped,
-                ),
-              ),
-              if (extended)
-                SizedBox(
-                  width: 128,
-                  child: Row(
-                    children: const [
-                      SizedBox(width: 36),
-                      ProfileAvatar(
-                        avatar: 'reply/avatars/avatar_2.jpg',
-                        radius: 16,
-                      ),
-                      SizedBox(width: 12),
-                      Icon(
-                        Icons.settings,
-                        color: ReplyColors.white50,
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsetsDirectional.only(
-            start: 12,
-            end: 16,
-          ),
-          child: _ReplyFab(extended: extended),
-        ),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
-}
-
-class _NavigationRailFolderSection extends StatelessWidget {
-  const _NavigationRailFolderSection({@required this.folders})
-      : assert(folders != null);
-
-  final Map<String, String> folders;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final navigationRailTheme = theme.navigationRailTheme;
-
-    return SizedBox(
-      height: 485,
-      width: 256,
-      child: ListView(
-        padding: const EdgeInsets.all(12),
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          const Divider(
-            color: ReplyColors.blue200,
-            thickness: 0.4,
-            indent: 14,
-            endIndent: 16,
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(
-              start: 16,
-            ),
-            child: Text(
-              'FOLDERS',
-              style: textTheme.caption.copyWith(
-                color: navigationRailTheme.unselectedLabelTextStyle.color,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          for (var folder in folders.keys)
-            InkWell(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(36),
-              ),
-              onTap: () {},
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const SizedBox(width: 12),
-                      ImageIcon(
-                        AssetImage(
-                          folders[folder],
-                          package: _assetsPackage,
-                        ),
-                        color:
-                            navigationRailTheme.unselectedLabelTextStyle.color,
-                      ),
-                      const SizedBox(width: 24),
-                      Text(
-                        folder,
-                        style: textTheme.bodyText1.copyWith(
-                          color: navigationRailTheme
-                              .unselectedLabelTextStyle.color,
-                        ),
-                      ),
-                      const SizedBox(height: 72),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 
@@ -1028,10 +672,8 @@ class _MailNavigatorState extends State<_MailNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = isDisplayDesktop(context);
-
     return Navigator(
-      key: isDesktop ? desktopMailNavKey : mobileMailNavKey,
+      key: mobileMailNavKey,
       initialRoute: inboxRoute,
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -1088,7 +730,6 @@ class _ReplyFabState extends State<_ReplyFab>
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = isDisplayDesktop(context);
     final theme = Theme.of(context);
     final circleFabBorder = const CircleBorder();
 
@@ -1110,77 +751,31 @@ class _ReplyFabState extends State<_ReplyFab>
         );
         final tooltip = onMailView ? 'Reply' : 'Compose';
 
-        if (isDesktop) {
-          return FloatingActionButton.extended(
-            heroTag: 'Rail FAB',
-            tooltip: widget.extended ? null : tooltip,
-            isExtended: widget.extended,
-            onPressed: () {
-              var onSearchPage = Provider.of<EmailStore>(
-                context,
-                listen: false,
-              ).onSearchPage;
-              // Navigator does not have an easy way to access the current
-              // route when using a GlobalKey to keep track of NavigatorState.
-              // We can use [Navigator.popUntil] in order to access the current
-              // route, and check if it is a ComposePage. If it is not a
-              // ComposePage and we are not on the SearchPage, then we can push
-              // a ComposePage onto our navigator. We return true at the end
-              // so nothing is popped.
-              desktopMailNavKey.currentState.popUntil(
-                (route) {
-                  var currentRoute = route.settings.name;
-                  if (currentRoute != ReplyApp.composeRoute && !onSearchPage) {
-                    desktopMailNavKey.currentState
-                        .pushNamed(ReplyApp.composeRoute);
-                  }
-                  return true;
-                },
-              );
-            },
-            label: Row(
-              children: [
-                fabSwitcher,
-                if (widget.extended) ...[
-                  const SizedBox(width: 16),
-                  Text(
-                    tooltip.toUpperCase(),
-                    style: Theme.of(context).textTheme.headline5.copyWith(
-                          fontSize: 16,
-                          color: theme.colorScheme.onSecondary,
-                        ),
-                  ),
-                ]
-              ],
-            ),
-          );
-        } else {
-          return OpenContainer(
-            openBuilder: (context, closedContainer) {
-              return const ComposePage();
-            },
-            openColor: theme.cardColor,
-            closedShape: circleFabBorder,
-            closedColor: theme.colorScheme.secondary,
-            closedElevation: 6,
-            closedBuilder: (context, openContainer) {
-              return Tooltip(
-                message: tooltip,
-                child: InkWell(
-                  customBorder: circleFabBorder,
-                  onTap: openContainer,
-                  child: SizedBox(
-                    height: _mobileFabDimension,
-                    width: _mobileFabDimension,
-                    child: Center(
-                      child: fabSwitcher,
-                    ),
+        return OpenContainer(
+          openBuilder: (context, closedContainer) {
+            return const ComposePage();
+          },
+          openColor: theme.cardColor,
+          closedShape: circleFabBorder,
+          closedColor: theme.colorScheme.secondary,
+          closedElevation: 6,
+          closedBuilder: (context, openContainer) {
+            return Tooltip(
+              message: tooltip,
+              child: InkWell(
+                customBorder: circleFabBorder,
+                onTap: openContainer,
+                child: SizedBox(
+                  height: _mobileFabDimension,
+                  width: _mobileFabDimension,
+                  child: Center(
+                    child: fabSwitcher,
                   ),
                 ),
-              );
-            },
-          );
-        }
+              ),
+            );
+          },
+        );
       },
     );
   }
