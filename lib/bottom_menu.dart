@@ -58,20 +58,8 @@ class _BottomSheetMenuState extends State<BottomSheetMenu> {
   void initState() {
     super.initState();
     _theme = Provider.of<EmailStore>(context, listen: false).themeMode;
-    switch (timeDilation.toInt()) {
-      case 1:
-        _animationSpeedSetting = AnimationSpeedSetting.normal;
-        break;
-      case 5:
-        _animationSpeedSetting = AnimationSpeedSetting.slow;
-        break;
-      case 10:
-        _animationSpeedSetting = AnimationSpeedSetting.slower;
-        break;
-      case 15:
-        _animationSpeedSetting = AnimationSpeedSetting.slowest;
-        break;
-    }
+    _animationSpeedSetting =
+        Provider.of<EmailStore>(context, listen: false).animationSpeed;
   }
 
   @override
@@ -94,7 +82,8 @@ class _BottomSheetMenuState extends State<BottomSheetMenu> {
         state(() {
           _animationSpeedSetting = animationSpeed;
         });
-
+        Provider.of<EmailStore>(context, listen: false).animationSpeed =
+            animationSpeed;
         timeDilation = animationSpeed.value;
       }
 

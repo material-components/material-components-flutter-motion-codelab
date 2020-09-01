@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:reply/bottom_menu.dart';
 
 import 'email_model.dart';
 
@@ -168,6 +169,7 @@ class EmailStore with ChangeNotifier {
   String _currentlySelectedInbox = 'Inbox';
   bool _onSearchPage = false;
   ThemeMode _currentTheme = ThemeMode.system;
+  AnimationSpeedSetting _currentAnimationSpeed = AnimationSpeedSetting.normal;
 
   Map<String, Set<Email>> get emails =>
       Map<String, Set<Email>>.unmodifiable(_categories);
@@ -204,6 +206,7 @@ class EmailStore with ChangeNotifier {
   bool get onMailView => _currentlySelectedEmailId > -1;
   bool get onSearchPage => _onSearchPage;
   ThemeMode get themeMode => _currentTheme;
+  AnimationSpeedSetting get animationSpeed => _currentAnimationSpeed;
 
   bool isEmailStarred(Email email) {
     return _categories['Starred'].contains(email);
@@ -227,5 +230,9 @@ class EmailStore with ChangeNotifier {
   set themeMode(ThemeMode theme) {
     _currentTheme = theme;
     notifyListeners();
+  }
+
+  set animationSpeed(AnimationSpeedSetting speed) {
+    _currentAnimationSpeed = speed;
   }
 }
