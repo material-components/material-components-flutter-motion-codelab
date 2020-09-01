@@ -31,7 +31,6 @@ dependencies:
   provider: ^4.3.2
   animations: ^1.1.2
   google_fonts: ^1.1.0
-  adaptive_breakpoints: ^0.0.2
   flutter_gallery_assets: ^0.2.5
 
 dev_dependencies:

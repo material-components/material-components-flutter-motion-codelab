@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'home.dart';
-import 'layout/letter_spacing.dart';
 import 'model/email_store.dart';
 
 final rootNavKey = GlobalKey<NavigatorState>();
@@ -188,44 +187,44 @@ TextTheme _buildReplyLightTextTheme(TextTheme base) {
     headline4: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 34,
-      letterSpacing: letterSpacingOrNone(0.4),
+      letterSpacing: 0.4,
       height: 0.9,
       color: ReplyColors.black900,
     ),
     headline5: GoogleFonts.workSans(
       fontWeight: FontWeight.bold,
       fontSize: 24,
-      letterSpacing: letterSpacingOrNone(0.27),
+      letterSpacing: 0.27,
       color: ReplyColors.black900,
     ),
     headline6: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 20,
-      letterSpacing: letterSpacingOrNone(0.18),
+      letterSpacing: 0.18,
       color: ReplyColors.black900,
     ),
     subtitle2: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 14,
-      letterSpacing: letterSpacingOrNone(-0.04),
+      letterSpacing: -0.04,
       color: ReplyColors.black900,
     ),
     bodyText1: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 18,
-      letterSpacing: letterSpacingOrNone(0.2),
+      letterSpacing: 0.2,
       color: ReplyColors.black900,
     ),
     bodyText2: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 14,
-      letterSpacing: letterSpacingOrNone(-0.05),
+      letterSpacing: -0.05,
       color: ReplyColors.black900,
     ),
     caption: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 12,
-      letterSpacing: letterSpacingOrNone(0.2),
+      letterSpacing: 0.2,
       color: ReplyColors.black900,
     ),
   );
@@ -236,44 +235,44 @@ TextTheme _buildReplyDarkTextTheme(TextTheme base) {
     headline4: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 34,
-      letterSpacing: letterSpacingOrNone(0.4),
+      letterSpacing: 0.4,
       height: 0.9,
       color: ReplyColors.white50,
     ),
     headline5: GoogleFonts.workSans(
       fontWeight: FontWeight.bold,
       fontSize: 24,
-      letterSpacing: letterSpacingOrNone(0.27),
+      letterSpacing: 0.27,
       color: ReplyColors.white50,
     ),
     headline6: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 20,
-      letterSpacing: letterSpacingOrNone(0.18),
+      letterSpacing: 0.18,
       color: ReplyColors.white50,
     ),
     subtitle2: GoogleFonts.workSans(
       fontWeight: FontWeight.w600,
       fontSize: 14,
-      letterSpacing: letterSpacingOrNone(-0.04),
+      letterSpacing: -0.04,
       color: ReplyColors.white50,
     ),
     bodyText1: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 18,
-      letterSpacing: letterSpacingOrNone(0.2),
+      letterSpacing: 0.2,
       color: ReplyColors.white50,
     ),
     bodyText2: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 14,
-      letterSpacing: letterSpacingOrNone(-0.05),
+      letterSpacing: -0.05,
       color: ReplyColors.white50,
     ),
     caption: GoogleFonts.workSans(
       fontWeight: FontWeight.normal,
       fontSize: 12,
-      letterSpacing: letterSpacingOrNone(0.2),
+      letterSpacing: 0.2,
       color: ReplyColors.white50,
     ),
   );
