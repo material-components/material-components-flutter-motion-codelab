@@ -3,11 +3,11 @@ import 'dart:math' as math;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'bottom_drawer.dart';
+import 'bottom_menu.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'inbox.dart';
@@ -427,9 +427,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 }
 
-enum AnimationSpeedSetting { normal, slow, slower, slowest }
-
-class _BottomAppBarActionItems extends StatefulWidget {
+class _BottomAppBarActionItems extends StatelessWidget {
   const _BottomAppBarActionItems({
     @required this.drawerController,
     @required this.drawerVisible,
@@ -438,29 +436,6 @@ class _BottomAppBarActionItems extends StatefulWidget {
 
   final AnimationController drawerController;
   final bool drawerVisible;
-
-  @override
-  _BottomAppBarActionItemsState createState() =>
-      _BottomAppBarActionItemsState();
-}
-
-class _BottomAppBarActionItemsState extends State<_BottomAppBarActionItems> {
-  static Map<int, AnimationSpeedSetting> _animationSettingMap = {
-    1: AnimationSpeedSetting.normal,
-    5: AnimationSpeedSetting.slow,
-    10: AnimationSpeedSetting.slower,
-    15: AnimationSpeedSetting.slowest,
-  };
-
-  AnimationSpeedSetting _animationSpeedSetting =
-      _animationSettingMap[timeDilation];
-  ThemeMode _theme;
-
-  @override
-  void initState() {
-    super.initState();
-    _theme = Provider.of<EmailStore>(context, listen: false).themeMode;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -491,7 +466,7 @@ class _BottomAppBarActionItemsState extends State<_BottomAppBarActionItems> {
 
         return _FadeThroughTransitionSwitcher(
           fillColor: Colors.transparent,
-          child: widget.drawerVisible
+          child: drawerVisible
               ? Align(
                   key: UniqueKey(),
                   alignment: Alignment.centerRight,
@@ -499,113 +474,16 @@ class _BottomAppBarActionItemsState extends State<_BottomAppBarActionItems> {
                     icon: const Icon(Icons.settings),
                     color: ReplyColors.white50,
                     onPressed: () async {
-                      widget.drawerController.reverse();
+                      drawerController.reverse();
                       showModalBottomSheet(
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: modalBorder,
-                          ),
-                          builder: (context) {
-                            return StatefulBuilder(builder: (context, state) {
-                              void setTheme(ThemeMode theme) {
-                                state(() {
-                                  _theme = theme;
-                                });
-                                Provider.of<EmailStore>(context, listen: false)
-                                    .themeMode = theme;
-                              }
-
-                              void setAnimationSpeed(
-                                  AnimationSpeedSetting animationSpeed) {
-                                state(() {
-                                  _animationSpeedSetting = animationSpeed;
-                                });
-
-                                switch (_animationSpeedSetting) {
-                                  case AnimationSpeedSetting.normal:
-                                    timeDilation = 1.0;
-                                    break;
-                                  case AnimationSpeedSetting.slow:
-                                    timeDilation = 5.0;
-                                    break;
-                                  case AnimationSpeedSetting.slower:
-                                    timeDilation = 10.0;
-                                    break;
-                                  case AnimationSpeedSetting.slowest:
-                                    timeDilation = 15.0;
-                                    break;
-                                }
-                              }
-
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .bottomSheetTheme
-                                      .backgroundColor,
-                                  borderRadius: modalBorder,
-                                ),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      ExpansionTile(
-                                        title: Text('Theme'),
-                                        children: [
-                                          RadioListTile(
-                                            title: Text('Light'),
-                                            value: ThemeMode.light,
-                                            groupValue: _theme,
-                                            onChanged: setTheme,
-                                          ),
-                                          RadioListTile(
-                                            title: Text('Dark'),
-                                            value: ThemeMode.dark,
-                                            groupValue: _theme,
-                                            onChanged: setTheme,
-                                          ),
-                                          RadioListTile(
-                                            title: Text('System default'),
-                                            value: ThemeMode.system,
-                                            groupValue: _theme,
-                                            onChanged: setTheme,
-                                          ),
-                                        ],
-                                      ),
-                                      ExpansionTile(
-                                        title: Text('Animation Speed'),
-                                        children: [
-                                          RadioListTile(
-                                            title: Text('1x'),
-                                            value: AnimationSpeedSetting.normal,
-                                            groupValue: _animationSpeedSetting,
-                                            onChanged: setAnimationSpeed,
-                                          ),
-                                          RadioListTile(
-                                            title: Text('5x'),
-                                            value: AnimationSpeedSetting.slow,
-                                            groupValue: _animationSpeedSetting,
-                                            onChanged: setAnimationSpeed,
-                                          ),
-                                          RadioListTile(
-                                            title: Text('10x'),
-                                            value: AnimationSpeedSetting.slower,
-                                            groupValue: _animationSpeedSetting,
-                                            onChanged: setAnimationSpeed,
-                                          ),
-                                          RadioListTile(
-                                            title: Text('15x'),
-                                            value:
-                                                AnimationSpeedSetting.slowest,
-                                            groupValue: _animationSpeedSetting,
-                                            onChanged: setAnimationSpeed,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
-                          });
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: modalBorder,
+                        ),
+                        builder: (context) {
+                          return const BottomSheetMenu();
+                        },
+                      );
                     },
                   ),
                 )
