@@ -43,21 +43,21 @@ extension ThemeModeExtension on ThemeMode {
   }
 }
 
-class BottomSheetMenu extends StatefulWidget {
-  const BottomSheetMenu();
+class SettingsBottomSheet extends StatefulWidget {
+  const SettingsBottomSheet();
 
   @override
-  _BottomSheetMenuState createState() => _BottomSheetMenuState();
+  _SettingsBottomSheetState createState() => _SettingsBottomSheetState();
 }
 
-class _BottomSheetMenuState extends State<BottomSheetMenu> {
+class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
   AnimationSpeedSetting _animationSpeedSetting;
-  ThemeMode _theme;
+  ThemeMode _themeMode;
 
   @override
   void initState() {
     super.initState();
-    _theme = Provider.of<EmailStore>(context, listen: false).themeMode;
+    _themeMode = Provider.of<EmailStore>(context, listen: false).themeMode;
     _animationSpeedSetting =
         Provider.of<EmailStore>(context, listen: false).animationSpeed;
   }
@@ -73,7 +73,7 @@ class _BottomSheetMenuState extends State<BottomSheetMenu> {
     return StatefulBuilder(builder: (context, state) {
       void setTheme(ThemeMode theme) {
         state(() {
-          _theme = theme;
+          _themeMode = theme;
         });
         Provider.of<EmailStore>(context, listen: false).themeMode = theme;
       }
@@ -98,11 +98,11 @@ class _BottomSheetMenuState extends State<BottomSheetMenu> {
               ExpansionTile(
                 title: Text('Theme'),
                 children: [
-                  for (var theme in ThemeMode.values)
+                  for (var themeMode in ThemeMode.values)
                     RadioListTile(
-                      title: Text(theme.name),
-                      value: theme,
-                      groupValue: _theme,
+                      title: Text(themeMode.name),
+                      value: themeMode,
+                      groupValue: _themeMode,
                       onChanged: setTheme,
                     ),
                 ],

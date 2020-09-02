@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'bottom_drawer.dart';
-import 'bottom_menu.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'inbox.dart';
 import 'model/email_store.dart';
 import 'search_page.dart';
+import 'settings_bottom_sheet.dart';
 
 const _assetsPackage = 'flutter_gallery_assets';
 const _iconAssetLocation = 'reply/icons';
@@ -317,75 +317,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           body: LayoutBuilder(
             builder: _buildStack,
           ),
-          bottomNavigationBar: Selector<EmailStore, bool>(
-            selector: (context, emailStore) => emailStore.onMailView,
-            builder: (context, onMailView, child) {
-              _bottomAppBarController.forward();
-
-              return SizeTransition(
-                sizeFactor: _bottomAppBarCurve,
-                axisAlignment: -1,
-                child: BottomAppBar(
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 8,
-                  child: SizedBox(
-                    height: kToolbarHeight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16)),
-                          onTap: _toggleBottomDrawerVisibility,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              RotationTransition(
-                                turns: Tween(
-                                  begin: 0.0,
-                                  end: 1.0,
-                                ).animate(_dropArrowCurve),
-                                child: const Icon(
-                                  Icons.arrow_drop_up,
-                                  color: ReplyColors.white50,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const _ReplyLogo(),
-                              const SizedBox(width: 10),
-                              AnimatedOpacity(
-                                opacity: _bottomDrawerVisible || onMailView
-                                    ? 0.0
-                                    : 1.0,
-                                duration: _kAnimationDuration,
-                                curve: standardEasing,
-                                child: Text(
-                                  _navigationDestinations[_selectedIndex].name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(color: ReplyColors.white50),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            color: Colors.transparent,
-                            child: _BottomAppBarActionItems(
-                              drawerController: _drawerController,
-                              drawerVisible: _bottomDrawerVisible,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+          bottomNavigationBar: _AnimatedBottomAppBar(
+            bottomAppBarController: _bottomAppBarController,
+            bottomAppBarCurve: _bottomAppBarCurve,
+            bottomDrawerVisible: _bottomDrawerVisible,
+            drawerController: _drawerController,
+            dropArrowCurve: _dropArrowCurve,
+            navigationDestinations: _navigationDestinations,
+            selectedIndex: _selectedIndex,
+            toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
           ),
           floatingActionButton: _bottomDrawerVisible
               ? null
@@ -401,6 +341,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<bool> _willPopCallback() async {
+    // This function handles when a back button or back gesture is initiated.
+    // It checks first if we are on the SearchPage and if we are then it updates
+    // the onSearchPage property in our EmailStore to "pop" us off the
+    // SearchPage. If we are not on the SearchPage then we check if our
+    // navigator has any routes to pop, and if it does then we pop one route
+    // from the stack and update our EmailStore's currentlySelectedEmailId
+    // to indicate we are back on the HomePage.
     var onSearchPage = Provider.of<EmailStore>(
       context,
       listen: false,
@@ -424,6 +371,100 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return true;
+  }
+}
+
+class _AnimatedBottomAppBar extends StatelessWidget {
+  const _AnimatedBottomAppBar({
+    this.bottomAppBarController,
+    this.bottomAppBarCurve,
+    this.bottomDrawerVisible,
+    this.drawerController,
+    this.dropArrowCurve,
+    this.navigationDestinations,
+    this.selectedIndex,
+    this.toggleBottomDrawerVisibility,
+  });
+
+  final AnimationController bottomAppBarController;
+  final Animation<double> bottomAppBarCurve;
+  final bool bottomDrawerVisible;
+  final AnimationController drawerController;
+  final Animation<double> dropArrowCurve;
+  final List<_Destination> navigationDestinations;
+  final int selectedIndex;
+  final VoidCallback toggleBottomDrawerVisibility;
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<EmailStore, bool>(
+      selector: (context, emailStore) => emailStore.onMailView,
+      builder: (context, onMailView, child) {
+        bottomAppBarController.forward();
+
+        return SizeTransition(
+          sizeFactor: bottomAppBarCurve,
+          axisAlignment: -1,
+          child: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    onTap: toggleBottomDrawerVisibility,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        RotationTransition(
+                          turns: Tween(
+                            begin: 0.0,
+                            end: 1.0,
+                          ).animate(dropArrowCurve),
+                          child: const Icon(
+                            Icons.arrow_drop_up,
+                            color: ReplyColors.white50,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const _ReplyLogo(),
+                        const SizedBox(width: 10),
+                        AnimatedOpacity(
+                          opacity:
+                              bottomDrawerVisible || onMailView ? 0.0 : 1.0,
+                          duration: _kAnimationDuration,
+                          curve: standardEasing,
+                          child: Text(
+                            navigationDestinations[selectedIndex].name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(color: ReplyColors.white50),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.transparent,
+                      child: _BottomAppBarActionItems(
+                        drawerController: drawerController,
+                        drawerVisible: bottomDrawerVisible,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -480,9 +521,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: modalBorder,
                         ),
-                        builder: (context) {
-                          return const BottomSheetMenu();
-                        },
+                        builder: (context) => const SettingsBottomSheet(),
                       );
                     },
                   ),
