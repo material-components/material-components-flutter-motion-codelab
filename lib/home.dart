@@ -642,15 +642,14 @@ class _BottomDrawerDestinations extends StatelessWidget {
                 ),
                 color: destination.index == selectedIndex
                     ? theme.colorScheme.secondary
-                    : theme.navigationRailTheme.unselectedLabelTextStyle.color,
+                    : ReplyColors.white50.withOpacity(0.64),
               ),
               title: Text(
                 destination.name,
                 style: theme.textTheme.bodyText2.copyWith(
                   color: destination.index == selectedIndex
                       ? theme.colorScheme.secondary
-                      : theme
-                          .navigationRailTheme.unselectedLabelTextStyle.color,
+                      : ReplyColors.white50.withOpacity(0.64),
                 ),
               ),
             ),
@@ -683,7 +682,6 @@ class _BottomDrawerFolderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final navigationRailTheme = theme.navigationRailTheme;
 
     return Column(
       children: [
@@ -696,12 +694,12 @@ class _BottomDrawerFolderSection extends StatelessWidget {
                   folders[folder],
                   package: _assetsPackage,
                 ),
-                color: navigationRailTheme.unselectedLabelTextStyle.color,
+                color: ReplyColors.white50.withOpacity(0.64),
               ),
               title: Text(
                 folder,
                 style: theme.textTheme.bodyText2.copyWith(
-                  color: navigationRailTheme.unselectedLabelTextStyle.color,
+                  color: ReplyColors.white50.withOpacity(0.64),
                 ),
               ),
             ),
