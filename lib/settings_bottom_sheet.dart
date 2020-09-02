@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'model/email_store.dart';
@@ -84,7 +83,6 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
         });
         Provider.of<EmailStore>(context, listen: false).animationSpeed =
             animationSpeed;
-        timeDilation = animationSpeed.value;
       }
 
       return Container(

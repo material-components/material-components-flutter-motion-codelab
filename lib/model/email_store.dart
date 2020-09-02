@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:reply/settings_bottom_sheet.dart';
 
@@ -234,5 +235,6 @@ class EmailStore with ChangeNotifier {
 
   set animationSpeed(AnimationSpeedSetting speed) {
     _currentAnimationSpeed = speed;
+    timeDilation = animationSpeed.value;
   }
 }
