@@ -38,28 +38,32 @@ class ReplyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<EmailStore>.value(value: EmailStore()),
       ],
-      child: MaterialApp(
-        navigatorKey: rootNavKey,
-        title: 'Reply',
-        debugShowCheckedModeBanner: false,
-        darkTheme: _buildReplyDarkTheme(context),
-        theme: _buildReplyLightTheme(context),
-        initialRoute: homeRoute,
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case homeRoute:
-              return MaterialPageRoute<void>(
-                builder: (context) => const HomePage(),
-                settings: settings,
-              );
-              break;
-            case composeRoute:
-              return createComposeRoute(settings);
-              break;
-          }
-          return null;
-        },
-      ),
+      child: Selector<EmailStore, ThemeMode>(
+          selector: (context, emailStore) => emailStore.themeMode,
+          builder: (context, themeMode, child) {
+            return MaterialApp(
+              navigatorKey: rootNavKey,
+              themeMode: themeMode,
+              title: 'Reply',
+              darkTheme: _buildReplyDarkTheme(context),
+              theme: _buildReplyLightTheme(context),
+              initialRoute: homeRoute,
+              onGenerateRoute: (settings) {
+                switch (settings.name) {
+                  case homeRoute:
+                    return MaterialPageRoute<void>(
+                      builder: (context) => const HomePage(),
+                      settings: settings,
+                    );
+                    break;
+                  case composeRoute:
+                    return createComposeRoute(settings);
+                    break;
+                }
+                return null;
+              },
+            );
+          }),
     );
   }
 }
@@ -74,7 +78,7 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
       modalBackgroundColor: Colors.white.withOpacity(0.4),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.blue700,
+      backgroundColor: ReplyColors.white50,
       selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
       selectedLabelTextStyle:
           GoogleFonts.workSansTextTheme().headline5.copyWith(
@@ -122,7 +126,7 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
       modalBackgroundColor: Colors.black.withOpacity(0.8),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.darkBottomAppBarBackground,
+      backgroundColor: ReplyColors.darkDrawerBackground,
       selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
       selectedLabelTextStyle:
           GoogleFonts.workSansTextTheme().headline5.copyWith(

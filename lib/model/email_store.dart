@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:reply/settings_bottom_sheet.dart';
 
 import 'email_model.dart';
 
@@ -166,6 +169,8 @@ class EmailStore with ChangeNotifier {
   int _currentlySelectedEmailId = -1;
   String _currentlySelectedInbox = 'Inbox';
   bool _onSearchPage = false;
+  ThemeMode _currentTheme = ThemeMode.system;
+  AnimationSpeedSetting _currentAnimationSpeed = AnimationSpeedSetting.normal;
 
   Map<String, Set<Email>> get emails =>
       Map<String, Set<Email>>.unmodifiable(_categories);
@@ -201,6 +206,8 @@ class EmailStore with ChangeNotifier {
   String get currentlySelectedInbox => _currentlySelectedInbox;
   bool get onMailView => _currentlySelectedEmailId > -1;
   bool get onSearchPage => _onSearchPage;
+  ThemeMode get themeMode => _currentTheme;
+  AnimationSpeedSetting get animationSpeed => _currentAnimationSpeed;
 
   bool isEmailStarred(Email email) {
     return _categories['Starred'].contains(email);
@@ -219,5 +226,15 @@ class EmailStore with ChangeNotifier {
   set onSearchPage(bool value) {
     _onSearchPage = value;
     notifyListeners();
+  }
+
+  set themeMode(ThemeMode theme) {
+    _currentTheme = theme;
+    notifyListeners();
+  }
+
+  set animationSpeed(AnimationSpeedSetting speed) {
+    _currentAnimationSpeed = speed;
+    timeDilation = animationSpeed.value;
   }
 }
