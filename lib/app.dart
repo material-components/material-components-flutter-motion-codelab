@@ -77,20 +77,6 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
       backgroundColor: ReplyColors.blue700,
       modalBackgroundColor: Colors.white.withOpacity(0.4),
     ),
-    navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.white50,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange500),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange500,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.blue200),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.blue200,
-              ),
-    ),
-    canvasColor: ReplyColors.white50,
     cardColor: ReplyColors.white50,
     chipTheme: _buildChipTheme(
       ReplyColors.blue700,
@@ -125,20 +111,6 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
       backgroundColor: ReplyColors.darkDrawerBackground,
       modalBackgroundColor: Colors.black.withOpacity(0.8),
     ),
-    navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: ReplyColors.darkDrawerBackground,
-      selectedIconTheme: const IconThemeData(color: ReplyColors.orange300),
-      selectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.orange300,
-              ),
-      unselectedIconTheme: const IconThemeData(color: ReplyColors.greyLabel),
-      unselectedLabelTextStyle:
-          GoogleFonts.workSansTextTheme().headline5.copyWith(
-                color: ReplyColors.greyLabel,
-              ),
-    ),
-    canvasColor: ReplyColors.black900,
     cardColor: ReplyColors.darkCardBackground,
     chipTheme: _buildChipTheme(
       ReplyColors.blue200,
@@ -157,7 +129,7 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
       onBackground: ReplyColors.white50,
       onSurface: ReplyColors.white50,
       onError: ReplyColors.black900,
-      background: ReplyColors.black900Alpha087,
+      background: ReplyColors.black900,
     ),
     textTheme: _buildReplyDarkTextTheme(base.textTheme),
     scaffoldBackgroundColor: ReplyColors.black900,

@@ -87,8 +87,8 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
 
       return Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).navigationRailTheme.backgroundColor,
           borderRadius: modalBorder,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: SingleChildScrollView(
           child: Column(
