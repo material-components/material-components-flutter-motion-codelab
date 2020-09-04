@@ -25,6 +25,12 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
   }
 
   @override
+  void dispose() {
+    replyState.removeListener(notifyListeners);
+    super.dispose();
+  }
+
+  @override
   ReplyRoutePath get currentConfiguration =>
       replyState.routePath; //appState.routePath
 

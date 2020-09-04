@@ -27,6 +27,12 @@ class _ReplyAppState extends State<ReplyApp> {
   }
 
   @override
+  void dispose() {
+    _routerDelegate.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
