@@ -28,9 +28,10 @@ class InboxPage extends StatelessWidget {
               : ListView.separated(
                   itemCount: model.emails[destination].length,
                   padding: EdgeInsetsDirectional.only(
-                      start: horizontalPadding,
-                      end: horizontalPadding,
-                      bottom: kToolbarHeight),
+                    start: horizontalPadding,
+                    end: horizontalPadding,
+                    bottom: kToolbarHeight,
+                  ),
                   separatorBuilder: (context, index) => SizedBox(height: 4),
                   itemBuilder: (context, index) {
                     return MailPreviewCard(
