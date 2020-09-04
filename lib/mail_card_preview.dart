@@ -28,6 +28,88 @@ class MailPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final colorScheme = theme.colorScheme;
+    final mailPreview = _MailPreview(
+      id: id,
+      email: email,
+      onStar: onStar,
+      onDelete: onDelete,
+    );
+    final onStarredInbox = Provider.of<EmailStore>(
+          context,
+          listen: false,
+        ).currentlySelectedInbox ==
+        'Starred';
+
+    return _OpenContainerWrapper(
+      id: id,
+      email: email,
+      closedChild: Dismissible(
+        key: ObjectKey(email),
+        dismissThresholds: const {
+          DismissDirection.startToEnd: 0.8,
+          DismissDirection.endToStart: 0.4,
+        },
+        onDismissed: (direction) {
+          switch (direction) {
+            case DismissDirection.endToStart:
+              if (onStarredInbox) {
+                onStar();
+              }
+              break;
+            case DismissDirection.startToEnd:
+              onDelete();
+              break;
+            default:
+          }
+        },
+        background: _DismissibleContainer(
+          icon: 'twotone_delete',
+          backgroundColor: colorScheme.primary,
+          iconColor: ReplyColors.blue50,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsetsDirectional.only(start: 20),
+        ),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            if (onStarredInbox) {
+              return true;
+            }
+            onStar();
+            return false;
+          } else {
+            return true;
+          }
+        },
+        secondaryBackground: _DismissibleContainer(
+          icon: 'twotone_star',
+          backgroundColor: colorScheme.secondary,
+          iconColor: ReplyColors.black900,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsetsDirectional.only(end: 20),
+        ),
+        child: mailPreview,
+      ),
+    );
+  }
+}
+
+class _OpenContainerWrapper extends StatelessWidget {
+  const _OpenContainerWrapper({
+    @required this.id,
+    @required this.email,
+    @required this.closedChild,
+  })  : assert(id != null),
+        assert(email != null),
+        assert(closedChild != null);
+
+  final int id;
+  final Email email;
+  final Widget closedChild;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return OpenContainer(
       openBuilder: (context, closedContainer) {
         return MailViewPage(id: id, email: email);
@@ -39,65 +121,15 @@ class MailPreviewCard extends StatelessWidget {
       closedElevation: 0,
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
-        final colorScheme = theme.colorScheme;
-        final mailPreview = _MailPreview(
-          id: id,
-          email: email,
-          onTap: openContainer,
-          onStar: onStar,
-          onDelete: onDelete,
-        );
-        final onStarredInbox = Provider.of<EmailStore>(
+        return InkWell(
+          onTap: () {
+            Provider.of<EmailStore>(
               context,
               listen: false,
-            ).currentlySelectedInbox ==
-            'Starred';
-
-        return Dismissible(
-          key: ObjectKey(email),
-          dismissThresholds: const {
-            DismissDirection.startToEnd: 0.8,
-            DismissDirection.endToStart: 0.4,
+            ).currentlySelectedEmailId = id;
+            openContainer();
           },
-          onDismissed: (direction) {
-            switch (direction) {
-              case DismissDirection.endToStart:
-                if (onStarredInbox) {
-                  onStar();
-                }
-                break;
-              case DismissDirection.startToEnd:
-                onDelete();
-                break;
-              default:
-            }
-          },
-          background: _DismissibleContainer(
-            icon: 'twotone_delete',
-            backgroundColor: colorScheme.primary,
-            iconColor: ReplyColors.blue50,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsetsDirectional.only(start: 20),
-          ),
-          confirmDismiss: (direction) async {
-            if (direction == DismissDirection.endToStart) {
-              if (onStarredInbox) {
-                return true;
-              }
-              onStar();
-              return false;
-            } else {
-              return true;
-            }
-          },
-          secondaryBackground: _DismissibleContainer(
-            icon: 'twotone_star',
-            backgroundColor: colorScheme.secondary,
-            iconColor: ReplyColors.black900,
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsetsDirectional.only(end: 20),
-          ),
-          child: mailPreview,
+          child: closedChild,
         );
       },
     );
@@ -148,16 +180,13 @@ class _MailPreview extends StatelessWidget {
   const _MailPreview({
     @required this.id,
     @required this.email,
-    @required this.onTap,
     this.onStar,
     this.onDelete,
   })  : assert(id != null),
-        assert(email != null),
-        assert(onTap != null);
+        assert(email != null);
 
   final int id;
   final Email email;
-  final VoidCallback onTap;
   final VoidCallback onStar;
   final VoidCallback onDelete;
 
@@ -169,79 +198,70 @@ class _MailPreview extends StatelessWidget {
       listen: false,
     );
 
-    return InkWell(
-      onTap: () {
-        Provider.of<EmailStore>(
-          context,
-          listen: false,
-        ).currentlySelectedEmailId = id;
-        onTap();
-      },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              '${email.sender} - ${email.time}',
-                              style: textTheme.caption,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(email.subject, style: textTheme.headline6),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
-                      ),
-                      _MailPreviewActionBar(
-                        avatar: email.avatar,
-                        isStarred: emailStore.isEmailStarred(email),
-                        onStar: onStar,
-                        onDelete: onDelete,
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(
-                      end: 20,
-                    ),
-                    child: Text(
-                      email.message,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: textTheme.bodyText2,
-                    ),
-                  ),
-                  if (email.containsPictures) ...[
-                    Flexible(
-                      fit: FlexFit.loose,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
                       child: Column(
-                        children: const [
-                          SizedBox(height: 20),
-                          _PicturePreview(),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            '${email.sender} - ${email.time}',
+                            style: textTheme.caption,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(email.subject, style: textTheme.headline6),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
+                    _MailPreviewActionBar(
+                      avatar: email.avatar,
+                      isStarred: emailStore.isEmailStarred(email),
+                      onStar: onStar,
+                      onDelete: onDelete,
+                    ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    end: 20,
+                  ),
+                  child: Text(
+                    email.message,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: textTheme.bodyText2,
+                  ),
+                ),
+                if (email.containsPictures) ...[
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Column(
+                      children: const [
+                        SizedBox(height: 20),
+                        _PicturePreview(),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
