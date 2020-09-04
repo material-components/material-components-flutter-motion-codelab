@@ -29,30 +29,24 @@ class InboxPage extends StatelessWidget {
                           'Empty in ${model.currentlySelectedInbox.toLowerCase()}',
                         ),
                       )
-                    : SingleChildScrollView(
+                    : ListView.separated(
+                        itemCount: model.emails[destination].length,
                         padding: EdgeInsetsDirectional.only(
                           start: horizontalPadding,
                           end: horizontalPadding,
                         ),
-                        child: Column(
-                          children: [
-                            for (int index = 0;
-                                index < model.emails[destination].length;
-                                index++) ...[
-                              MailPreviewCard(
-                                id: index,
-                                email:
-                                    model.emails[destination].elementAt(index),
-                                onDelete: () =>
-                                    model.deleteEmail(destination, index),
-                                onStar: () =>
-                                    model.starEmail(destination, index),
-                              ),
-                              const SizedBox(height: 4),
-                            ],
-                            const SizedBox(height: kToolbarHeight),
-                          ],
-                        ),
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 4),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return MailPreviewCard(
+                            id: index,
+                            email: model.emails[destination].elementAt(index),
+                            onDelete: () =>
+                                model.deleteEmail(destination, index),
+                            onStar: () => model.starEmail(destination, index),
+                          );
+                        },
                       ),
               ),
             ],
