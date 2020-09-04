@@ -739,6 +739,12 @@ class _ReplyFabState extends State<_ReplyFab>
             return const ComposePage();
           },
           openColor: theme.cardColor,
+          onClosed: (success) {
+            Provider.of<EmailStore>(
+              context,
+              listen: false,
+            ).onCompose = false;
+          },
           closedShape: circleFabBorder,
           closedColor: theme.colorScheme.secondary,
           closedElevation: 6,
@@ -747,7 +753,13 @@ class _ReplyFabState extends State<_ReplyFab>
               message: tooltip,
               child: InkWell(
                 customBorder: circleFabBorder,
-                onTap: openContainer,
+                onTap: () {
+                  Provider.of<EmailStore>(
+                    context,
+                    listen: false,
+                  ).onCompose = true;
+                  openContainer();
+                },
                 child: SizedBox(
                   height: _mobileFabDimension,
                   width: _mobileFabDimension,

@@ -168,6 +168,7 @@ class EmailStore with ChangeNotifier {
 
   int _currentlySelectedEmailId = -1;
   String _currentlySelectedInbox = 'Inbox';
+  bool _onCompose = false;
   ThemeMode _currentTheme = ThemeMode.system;
   AnimationSpeedSetting _currentAnimationSpeed = AnimationSpeedSetting.normal;
 
@@ -204,6 +205,7 @@ class EmailStore with ChangeNotifier {
   int get currentlySelectedEmailId => _currentlySelectedEmailId;
   String get currentlySelectedInbox => _currentlySelectedInbox;
   bool get onMailView => _currentlySelectedEmailId > -1;
+  bool get onCompose => _onCompose;
   ThemeMode get themeMode => _currentTheme;
   AnimationSpeedSetting get animationSpeed => _currentAnimationSpeed;
 
@@ -229,5 +231,10 @@ class EmailStore with ChangeNotifier {
   set animationSpeed(AnimationSpeedSetting speed) {
     _currentAnimationSpeed = speed;
     timeDilation = animationSpeed.value;
+  }
+
+  set onCompose(bool value) {
+    _onCompose = value;
+    notifyListeners();
   }
 }

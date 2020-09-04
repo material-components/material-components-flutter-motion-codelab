@@ -14,6 +14,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   @override
   Widget build(BuildContext context) {
     bool _handlePopPage(Route<dynamic> route, dynamic result) {
+      print('what');
       return false;
     }
 
@@ -36,12 +37,21 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
   @override
   Future<bool> popRoute() {
+    bool onCompose =
+        Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
+            .onCompose;
+
+    if (onCompose) {
+      return SynchronousFuture<bool>(false);
+    }
+
     if (navigatorKey.currentState.canPop()) {
       navigatorKey.currentState.pop();
       Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
           .currentlySelectedEmailId = -1;
       return SynchronousFuture<bool>(true);
     }
+
     return SynchronousFuture<bool>(false);
   }
 
