@@ -19,38 +19,28 @@ class InboxPage extends StatelessWidget {
       builder: (context, model, child) {
         return SafeArea(
           bottom: false,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: model.emails[model.currentlySelectedInbox].isEmpty
-                    ? Center(
-                        child: Text(
-                          'Empty in ${model.currentlySelectedInbox.toLowerCase()}',
-                        ),
-                      )
-                    : ListView.separated(
-                        itemCount: model.emails[destination].length,
-                        padding: EdgeInsetsDirectional.only(
-                          start: horizontalPadding,
-                          end: horizontalPadding,
-                        ),
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 4),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return MailPreviewCard(
-                            id: index,
-                            email: model.emails[destination].elementAt(index),
-                            onDelete: () =>
-                                model.deleteEmail(destination, index),
-                            onStar: () => model.starEmail(destination, index),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
+          child: model.emails[model.currentlySelectedInbox].isEmpty
+              ? Center(
+                  child: Text(
+                    'Empty in ${model.currentlySelectedInbox.toLowerCase()}',
+                  ),
+                )
+              : ListView.separated(
+                  itemCount: model.emails[destination].length,
+                  padding: EdgeInsetsDirectional.only(
+                      start: horizontalPadding,
+                      end: horizontalPadding,
+                      bottom: kToolbarHeight),
+                  separatorBuilder: (context, index) => SizedBox(height: 4),
+                  itemBuilder: (context, index) {
+                    return MailPreviewCard(
+                      id: index,
+                      email: model.emails[destination].elementAt(index),
+                      onDelete: () => model.deleteEmail(destination, index),
+                      onStar: () => model.starEmail(destination, index),
+                    );
+                  },
+                ),
         );
       },
     );
