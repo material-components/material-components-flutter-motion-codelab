@@ -248,7 +248,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       key: _bottomDrawerKey,
       children: [
         NotificationListener<ScrollNotification>(
-            onNotification: _handleScrollNotification, child: _MailRouter()),
+          onNotification: _handleScrollNotification,
+          child: _MailRouter(),
+        ),
         GestureDetector(
           onTap: () {
             _drawerController.reverse();
