@@ -3,21 +3,21 @@ import 'package:provider/provider.dart';
 
 import 'model/email_store.dart';
 
-enum AnimationSpeedSetting { normal, slow, slower, slowest }
+enum SlowMotionSpeedSetting { normal, slow, slower, slowest }
 
-extension AnimationSpeedSettingExtension on AnimationSpeedSetting {
+extension AnimationSpeedSettingExtension on SlowMotionSpeedSetting {
   double get value {
     switch (this) {
-      case AnimationSpeedSetting.normal:
+      case SlowMotionSpeedSetting.normal:
         return 1.0;
         break;
-      case AnimationSpeedSetting.slow:
+      case SlowMotionSpeedSetting.slow:
         return 5.0;
         break;
-      case AnimationSpeedSetting.slower:
+      case SlowMotionSpeedSetting.slower:
         return 10.0;
         break;
-      case AnimationSpeedSetting.slowest:
+      case SlowMotionSpeedSetting.slowest:
         return 15.0;
         break;
     }
@@ -50,14 +50,14 @@ class SettingsBottomSheet extends StatefulWidget {
 }
 
 class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
-  AnimationSpeedSetting _animationSpeedSetting;
+  SlowMotionSpeedSetting _slowMotionSpeedSetting;
   ThemeMode _themeMode;
 
   @override
   void initState() {
     super.initState();
     _themeMode = Provider.of<EmailStore>(context, listen: false).themeMode;
-    _animationSpeedSetting =
+    _slowMotionSpeedSetting =
         Provider.of<EmailStore>(context, listen: false).animationSpeed;
   }
 
@@ -77,12 +77,12 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
         Provider.of<EmailStore>(context, listen: false).themeMode = theme;
       }
 
-      void setAnimationSpeed(AnimationSpeedSetting animationSpeed) {
+      void setSlowMotionSpeed(SlowMotionSpeedSetting slowMotionSpeed) {
         state(() {
-          _animationSpeedSetting = animationSpeed;
+          _slowMotionSpeedSetting = slowMotionSpeed;
         });
         Provider.of<EmailStore>(context, listen: false).animationSpeed =
-            animationSpeed;
+            slowMotionSpeed;
       }
 
       return Container(
@@ -106,14 +106,14 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                 ],
               ),
               ExpansionTile(
-                title: Text('Animation Speed'),
+                title: Text('Slow Motion'),
                 children: [
-                  for (var animationSpeed in AnimationSpeedSetting.values)
+                  for (var animationSpeed in SlowMotionSpeedSetting.values)
                     RadioListTile(
                       title: Text('${animationSpeed.value.toInt()}x'),
                       value: animationSpeed,
-                      groupValue: _animationSpeedSetting,
-                      onChanged: setAnimationSpeed,
+                      groupValue: _slowMotionSpeedSetting,
+                      onChanged: setSlowMotionSpeed,
                     ),
                 ],
               ),
