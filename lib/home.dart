@@ -12,6 +12,7 @@ import 'bottom_drawer.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'inbox.dart';
+import 'mail_view_router.dart';
 import 'model/email_store.dart';
 import 'router.dart';
 import 'settings_bottom_sheet.dart';
@@ -690,57 +691,10 @@ class _MailRouterState extends State<_MailRouter> {
         Router.of(context).backButtonDispatcher as RootBackButtonDispatcher;
 
     return Router(
-      routerDelegate: _MailViewRouterDelegate(child: widget.child),
+      routerDelegate: MailViewRouterDelegate(child: widget.child),
       backButtonDispatcher: ChildBackButtonDispatcher(backButtonDispatcher)
         ..takePriority(),
     );
-  }
-}
-
-class _MailViewRouterDelegate extends RouterDelegate<void>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
-  _MailViewRouterDelegate({this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    bool _handlePopPage(Route<dynamic> route, dynamic result) {
-      return false;
-    }
-
-    return Navigator(
-      key: navigatorKey,
-      onPopPage: _handlePopPage,
-      pages: [
-        MaterialPage(
-          builder: (context) => _FadeThroughTransitionSwitcher(
-            fillColor: Theme.of(context).scaffoldBackgroundColor,
-            child: child,
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  GlobalKey<NavigatorState> get navigatorKey => mobileMailNavKey;
-
-  @override
-  Future<bool> popRoute() {
-    if (navigatorKey.currentState.canPop()) {
-      navigatorKey.currentState.pop();
-      Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
-          .currentlySelectedEmailId = -1;
-      return SynchronousFuture<bool>(true);
-    }
-    return SynchronousFuture<bool>(false);
-  }
-
-  @override
-  Future<void> setNewRoutePath(void configuration) {
-    // should never be called
-    throw UnimplementedError();
   }
 }
 
