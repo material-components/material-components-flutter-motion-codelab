@@ -17,8 +17,9 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
 
   RouterProvider replyState;
 
-  ReplyRouterDelegate(this.replyState)
-      : navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
+  ReplyRouterDelegate({@required this.replyState})
+      : assert(replyState != null),
+        navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
     replyState.addListener(() {
       notifyListeners();
     });
@@ -97,8 +98,11 @@ class ReplySearchPath extends ReplyRoutePath {
 }
 
 class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
-  SharedAxisTransitionPageWrapper({this.child, this.transitionKey})
-      : super(
+  SharedAxisTransitionPageWrapper(
+      {@required this.child, @required this.transitionKey})
+      : assert(child != null),
+        assert(transitionKey != null),
+        super(
           key: transitionKey,
           pageBuilder: (context, animation, secondaryAnimation) {
             return SharedAxisTransition(

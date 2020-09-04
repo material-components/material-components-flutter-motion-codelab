@@ -23,7 +23,7 @@ class _ReplyAppState extends State<ReplyApp> {
   @override
   void initState() {
     super.initState();
-    _routerDelegate = ReplyRouterDelegate(_replyState);
+    _routerDelegate = ReplyRouterDelegate(replyState: _replyState);
   }
 
   @override

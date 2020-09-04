@@ -8,7 +8,7 @@ import 'model/email_store.dart';
 
 class MailViewRouterDelegate extends RouterDelegate<void>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
-  MailViewRouterDelegate({this.child});
+  MailViewRouterDelegate({@required this.child}) : assert(child != null);
 
   final Widget child;
 
@@ -54,8 +54,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 }
 
 class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
-  FadeThroughTransitionPageWrapper({this.child, this.transitionKey})
-      : super(
+  FadeThroughTransitionPageWrapper(
+      {@required this.child, @required this.transitionKey})
+      : assert(child != null),
+        assert(transitionKey != null),
+        super(
           key: transitionKey,
           pageBuilder: (context, animation, secondaryAnimation) {
             return FadeThroughTransition(
