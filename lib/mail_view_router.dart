@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'home.dart';
+import 'inbox.dart';
 import 'model/email_store.dart';
 
 class MailViewRouterDelegate extends RouterDelegate<void>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
-  MailViewRouterDelegate({@required this.child}) : assert(child != null);
-
-  final Widget child;
+  MailViewRouterDelegate();
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +17,15 @@ class MailViewRouterDelegate extends RouterDelegate<void>
       return false;
     }
 
-    String currentMailBox =
+    String currentMailbox =
         Provider.of<EmailStore>(context, listen: false).currentlySelectedInbox;
     return Navigator(
       key: navigatorKey,
       onPopPage: _handlePopPage,
       pages: [
         FadeThroughTransitionPageWrapper(
-          child: child,
-          transitionKey: ValueKey(currentMailBox),
+          child: InboxPage(destination: currentMailbox),
+          transitionKey: ValueKey(currentMailbox),
         ),
       ],
     );

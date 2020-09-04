@@ -11,7 +11,6 @@ import 'package:reply/model/router_provider.dart';
 import 'bottom_drawer.dart';
 import 'colors.dart';
 import 'compose_page.dart';
-import 'inbox.dart';
 import 'mail_view_router.dart';
 import 'model/email_store.dart';
 import 'router.dart';
@@ -39,8 +38,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> _dropArrowCurve;
   Animation<double> _bottomAppBarCurve;
   int _selectedIndex = 0;
-  Widget _currentInbox;
-  UniqueKey _inboxKey = UniqueKey();
+
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
   final _navigationDestinations = <_Destination>[
     _Destination(
@@ -87,11 +85,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    _currentInbox = InboxPage(
-      key: _inboxKey,
-      destination: 'Inbox',
-    );
 
     _drawerController = AnimationController(
       duration: _kAnimationDuration,
@@ -152,10 +145,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
 
     if (emailStore.currentlySelectedInbox != destination) {
-      _inboxKey = UniqueKey();
+      emailStore.currentlySelectedInbox = destination;
     }
-
-    emailStore.currentlySelectedInbox = destination;
 
     if (emailStore.onMailView) {
       mobileMailNavKey.currentState.pop();
@@ -164,10 +155,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     setState(() {
       _selectedIndex = index;
-      _currentInbox = InboxPage(
-        key: _inboxKey,
-        destination: destination,
-      );
     });
   }
 
@@ -261,11 +248,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       key: _bottomDrawerKey,
       children: [
         NotificationListener<ScrollNotification>(
-          onNotification: _handleScrollNotification,
-          child: _MailRouter(
-            child: _currentInbox,
-          ),
-        ),
+            onNotification: _handleScrollNotification, child: _MailRouter()),
         GestureDetector(
           onTap: () {
             _drawerController.reverse();
@@ -676,9 +659,7 @@ class _BottomDrawerFolderSection extends StatelessWidget {
 }
 
 class _MailRouter extends StatefulWidget {
-  const _MailRouter({@required this.child}) : assert(child != null);
-
-  final Widget child;
+  const _MailRouter();
 
   @override
   _MailRouterState createState() => _MailRouterState();
@@ -691,7 +672,7 @@ class _MailRouterState extends State<_MailRouter> {
         Router.of(context).backButtonDispatcher as RootBackButtonDispatcher;
 
     return Router(
-      routerDelegate: MailViewRouterDelegate(child: widget.child),
+      routerDelegate: MailViewRouterDelegate(),
       backButtonDispatcher: ChildBackButtonDispatcher(backButtonDispatcher)
         ..takePriority(),
     );
