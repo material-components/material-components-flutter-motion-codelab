@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'model/email_store.dart';
+import 'package:reply/model/router_provider.dart';
+import 'package:reply/router.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage();
@@ -22,10 +22,10 @@ class SearchPage extends StatelessWidget {
                   children: [
                     BackButton(
                       onPressed: () {
-                        Provider.of<EmailStore>(
+                        Provider.of<RouterProvider>(
                           context,
                           listen: false,
-                        ).onSearchPage = false;
+                        ).routePath = ReplyHomePath();
                       },
                     ),
                     const Expanded(

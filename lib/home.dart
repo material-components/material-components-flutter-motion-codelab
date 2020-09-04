@@ -3,15 +3,16 @@ import 'dart:math' as math;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/model/router_provider.dart';
 
-import 'app.dart';
 import 'bottom_drawer.dart';
 import 'colors.dart';
 import 'compose_page.dart';
 import 'inbox.dart';
 import 'model/email_store.dart';
-import 'search_page.dart';
+import 'router.dart';
 import 'settings_bottom_sheet.dart';
 
 const _assetsPackage = 'flutter_gallery_assets';
@@ -311,56 +312,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _willPopCallback,
-      child: _SharedAxisTransitionSwitcher(
-        defaultChild: Scaffold(
-          extendBody: true,
-          body: LayoutBuilder(
-            builder: _buildStack,
-          ),
-          bottomNavigationBar: _AnimatedBottomAppBar(
-            bottomAppBarController: _bottomAppBarController,
-            bottomAppBarCurve: _bottomAppBarCurve,
-            bottomDrawerVisible: _bottomDrawerVisible,
-            drawerController: _drawerController,
-            dropArrowCurve: _dropArrowCurve,
-            navigationDestinations: _navigationDestinations,
-            selectedIndex: _selectedIndex,
-            toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
-          ),
-          floatingActionButton: _bottomDrawerVisible
-              ? null
-              : const Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: 8),
-                  child: _ReplyFab(),
-                ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+      child: Scaffold(
+        extendBody: true,
+        body: LayoutBuilder(
+          builder: _buildStack,
         ),
+        bottomNavigationBar: _AnimatedBottomAppBar(
+          bottomAppBarController: _bottomAppBarController,
+          bottomAppBarCurve: _bottomAppBarCurve,
+          bottomDrawerVisible: _bottomDrawerVisible,
+          drawerController: _drawerController,
+          dropArrowCurve: _dropArrowCurve,
+          navigationDestinations: _navigationDestinations,
+          selectedIndex: _selectedIndex,
+          toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
+        ),
+        floatingActionButton: _bottomDrawerVisible
+            ? null
+            : const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 8),
+                child: _ReplyFab(),
+              ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
   Future<bool> _willPopCallback() async {
-    // This function handles when a back button or back gesture is initiated.
-    // It checks first if we are on the SearchPage and if we are then it updates
-    // the onSearchPage property in our EmailStore to "pop" us off the
-    // SearchPage. If we are not on the SearchPage then we check if our
-    // navigator has any routes to pop, and if it does then we pop one route
-    // from the stack and update our EmailStore's currentlySelectedEmailId
-    // to indicate we are back on the HomePage.
-    var onSearchPage = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    ).onSearchPage;
-
-    if (onSearchPage) {
-      Provider.of<EmailStore>(
-        context,
-        listen: false,
-      ).onSearchPage = false;
-      return false;
-    }
-
     if (mobileMailNavKey.currentState.canPop()) {
       mobileMailNavKey.currentState.pop();
       Provider.of<EmailStore>(
@@ -582,10 +560,10 @@ class _BottomAppBarActionItems extends StatelessWidget {
                         icon: const Icon(Icons.search),
                         color: ReplyColors.white50,
                         onPressed: () {
-                          Provider.of<EmailStore>(
+                          Provider.of<RouterProvider>(
                             context,
                             listen: false,
-                          ).onSearchPage = true;
+                          ).routePath = ReplySearchPath();
                         },
                       ),
                     ),
@@ -626,7 +604,10 @@ class _BottomDrawerDestinations extends StatelessWidget {
               drawerController.reverse();
               dropArrowController.forward();
               Future.delayed(
-                Duration(milliseconds: drawerController.value == 1 ? 300 : 120),
+                Duration(
+                  milliseconds: (drawerController.value == 1 ? 300 : 120) *
+                      timeDilation.toInt(),
+                ),
                 () {
                   // Wait until animations are complete to reload the state.
                   // Delay scales with the timeDilation value of the gallery.
@@ -719,32 +700,23 @@ class _MailNavigator extends StatefulWidget {
 }
 
 class _MailNavigatorState extends State<_MailNavigator> {
-  static const inboxRoute = '/reply/inbox';
+  bool _handlePopPage(Route<dynamic> route, dynamic result) {
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
       key: mobileMailNavKey,
-      initialRoute: inboxRoute,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case inboxRoute:
-            return MaterialPageRoute<void>(
-              builder: (context) {
-                return _FadeThroughTransitionSwitcher(
-                  fillColor: Theme.of(context).scaffoldBackgroundColor,
-                  child: widget.child,
-                );
-              },
-              settings: settings,
-            );
-            break;
-          case ReplyApp.composeRoute:
-            return ReplyApp.createComposeRoute(settings);
-            break;
-        }
-        return null;
-      },
+      onPopPage: _handlePopPage,
+      pages: [
+        MaterialPage(
+          builder: (context) => _FadeThroughTransitionSwitcher(
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
+            child: widget.child,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -854,36 +826,6 @@ class _FadeThroughTransitionSwitcher extends StatelessWidget {
         );
       },
       child: child,
-    );
-  }
-}
-
-class _SharedAxisTransitionSwitcher extends StatelessWidget {
-  const _SharedAxisTransitionSwitcher({
-    @required this.defaultChild,
-  }) : assert(defaultChild != null);
-
-  final Widget defaultChild;
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<EmailStore, bool>(
-      selector: (context, emailStore) => emailStore.onSearchPage,
-      builder: (context, onSearchPage, child) {
-        return PageTransitionSwitcher(
-          reverse: !onSearchPage,
-          transitionBuilder: (child, animation, secondaryAnimation) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          child: onSearchPage ? const SearchPage() : defaultChild,
-        );
-      },
     );
   }
 }
