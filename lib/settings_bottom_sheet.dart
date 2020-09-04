@@ -58,7 +58,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
     super.initState();
     _themeMode = Provider.of<EmailStore>(context, listen: false).themeMode;
     _slowMotionSpeedSetting =
-        Provider.of<EmailStore>(context, listen: false).animationSpeed;
+        Provider.of<EmailStore>(context, listen: false).slowMotionSpeed;
   }
 
   @override
@@ -81,7 +81,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
         state(() {
           _slowMotionSpeedSetting = slowMotionSpeed;
         });
-        Provider.of<EmailStore>(context, listen: false).animationSpeed =
+        Provider.of<EmailStore>(context, listen: false).slowMotionSpeed =
             slowMotionSpeed;
       }
 
