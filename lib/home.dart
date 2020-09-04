@@ -713,7 +713,12 @@ class _MailViewRouterDelegate extends RouterDelegate<void>
       key: navigatorKey,
       onPopPage: _handlePopPage,
       pages: [
-        MaterialPage(builder: (context) => child),
+        MaterialPage(
+          builder: (context) => _FadeThroughTransitionSwitcher(
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
+            child: child,
+          ),
+        ),
       ],
     );
   }
