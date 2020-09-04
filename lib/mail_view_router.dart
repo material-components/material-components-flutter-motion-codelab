@@ -14,7 +14,6 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   @override
   Widget build(BuildContext context) {
     bool _handlePopPage(Route<dynamic> route, dynamic result) {
-      print('what');
       return false;
     }
 
