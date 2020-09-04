@@ -584,19 +584,10 @@ class _BottomDrawerDestinations extends StatelessWidget {
         for (var destination in destinations)
           InkWell(
             onTap: () {
-              drawerController.reverse();
+              drawerController.reverse().whenCompleteOrCancel(() {
+                onItemTapped(destination.index, destination.name);
+              });
               dropArrowController.forward();
-              Future.delayed(
-                Duration(
-                  milliseconds: (drawerController.value == 1 ? 300 : 120) *
-                      timeDilation.toInt(),
-                ),
-                () {
-                  // Wait until animations are complete to reload the state.
-                  // Delay scales with the timeDilation value of the gallery.
-                  onItemTapped(destination.index, destination.name);
-                },
-              );
             },
             child: ListTile(
               leading: ImageIcon(
