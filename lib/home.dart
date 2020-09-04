@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -157,7 +158,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     if (emailStore.onMailView) {
       mobileMailNavKey.currentState.pop();
-
       emailStore.currentlySelectedEmailId = -1;
     }
 
@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
-          child: _MailNavigator(
+          child: _MailRouter(
             child: _currentInbox,
           ),
         ),
@@ -310,45 +310,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _willPopCallback,
-      child: Scaffold(
-        extendBody: true,
-        body: LayoutBuilder(
-          builder: _buildStack,
-        ),
-        bottomNavigationBar: _AnimatedBottomAppBar(
-          bottomAppBarController: _bottomAppBarController,
-          bottomAppBarCurve: _bottomAppBarCurve,
-          bottomDrawerVisible: _bottomDrawerVisible,
-          drawerController: _drawerController,
-          dropArrowCurve: _dropArrowCurve,
-          navigationDestinations: _navigationDestinations,
-          selectedIndex: _selectedIndex,
-          toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
-        ),
-        floatingActionButton: _bottomDrawerVisible
-            ? null
-            : const Padding(
-                padding: EdgeInsetsDirectional.only(bottom: 8),
-                child: _ReplyFab(),
-              ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    return Scaffold(
+      extendBody: true,
+      body: LayoutBuilder(
+        builder: _buildStack,
       ),
+      bottomNavigationBar: _AnimatedBottomAppBar(
+        bottomAppBarController: _bottomAppBarController,
+        bottomAppBarCurve: _bottomAppBarCurve,
+        bottomDrawerVisible: _bottomDrawerVisible,
+        drawerController: _drawerController,
+        dropArrowCurve: _dropArrowCurve,
+        navigationDestinations: _navigationDestinations,
+        selectedIndex: _selectedIndex,
+        toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
+      ),
+      floatingActionButton: _bottomDrawerVisible
+          ? null
+          : const Padding(
+              padding: EdgeInsetsDirectional.only(bottom: 8),
+              child: _ReplyFab(),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
-  }
-
-  Future<bool> _willPopCallback() async {
-    if (mobileMailNavKey.currentState.canPop()) {
-      mobileMailNavKey.currentState.pop();
-      Provider.of<EmailStore>(
-        context,
-        listen: false,
-      ).currentlySelectedEmailId = -1;
-      return false;
-    }
-
-    return true;
   }
 }
 
@@ -690,34 +674,68 @@ class _BottomDrawerFolderSection extends StatelessWidget {
   }
 }
 
-class _MailNavigator extends StatefulWidget {
-  const _MailNavigator({@required this.child}) : assert(child != null);
+class _MailRouter extends StatefulWidget {
+  const _MailRouter({@required this.child}) : assert(child != null);
 
   final Widget child;
 
   @override
-  _MailNavigatorState createState() => _MailNavigatorState();
+  _MailRouterState createState() => _MailRouterState();
 }
 
-class _MailNavigatorState extends State<_MailNavigator> {
-  bool _handlePopPage(Route<dynamic> route, dynamic result) {
-    return true;
+class _MailRouterState extends State<_MailRouter> {
+  @override
+  Widget build(BuildContext context) {
+    final RootBackButtonDispatcher backButtonDispatcher =
+        Router.of(context).backButtonDispatcher as RootBackButtonDispatcher;
+
+    return Router(
+      routerDelegate: _MailViewRouterDelegate(child: widget.child),
+      backButtonDispatcher: ChildBackButtonDispatcher(backButtonDispatcher)
+        ..takePriority(),
+    );
   }
+}
+
+class _MailViewRouterDelegate extends RouterDelegate<void>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+  _MailViewRouterDelegate({this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    bool _handlePopPage(Route<dynamic> route, dynamic result) {
+      return false;
+    }
+
     return Navigator(
-      key: mobileMailNavKey,
+      key: navigatorKey,
       onPopPage: _handlePopPage,
       pages: [
-        MaterialPage(
-          builder: (context) => _FadeThroughTransitionSwitcher(
-            fillColor: Theme.of(context).scaffoldBackgroundColor,
-            child: widget.child,
-          ),
-        ),
+        MaterialPage(builder: (context) => child),
       ],
     );
+  }
+
+  @override
+  GlobalKey<NavigatorState> get navigatorKey => mobileMailNavKey;
+
+  @override
+  Future<bool> popRoute() {
+    if (navigatorKey.currentState.canPop()) {
+      navigatorKey.currentState.pop();
+      Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
+          .currentlySelectedEmailId = -1;
+      return SynchronousFuture<bool>(true);
+    }
+    return SynchronousFuture<bool>(false);
+  }
+
+  @override
+  Future<void> setNewRoutePath(void configuration) {
+    // should never be called
+    throw UnimplementedError();
   }
 }
 
