@@ -201,7 +201,7 @@ class _MailPreview extends StatelessWidget {
                               style: textTheme.caption,
                             ),
                             const SizedBox(height: 4),
-                            Text(email.subject, style: textTheme.headline6),
+                            Text(email.subject, style: textTheme.headline5),
                             const SizedBox(height: 16),
                           ],
                         ),
