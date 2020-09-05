@@ -13,6 +13,7 @@ import 'inbox.dart';
 import 'model/email_store.dart';
 import 'search_page.dart';
 import 'settings_bottom_sheet.dart';
+import 'waterfall_notched_rectangle.dart';
 
 const _assetsPackage = 'flutter_gallery_assets';
 const _iconAssetLocation = 'reply/icons';
@@ -406,8 +407,8 @@ class _AnimatedBottomAppBar extends StatelessWidget {
           sizeFactor: bottomAppBarCurve,
           axisAlignment: -1,
           child: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
+            shape: const WaterfallNotchedRectangle(),
+            notchMargin: 6,
             child: Container(
               height: kToolbarHeight,
               child: Row(
