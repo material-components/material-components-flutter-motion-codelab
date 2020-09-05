@@ -32,6 +32,7 @@ class InboxPage extends StatelessWidget {
                     end: horizontalPadding,
                     bottom: kToolbarHeight,
                   ),
+                  primary: false,
                   separatorBuilder: (context, index) => SizedBox(height: 4),
                   itemBuilder: (context, index) {
                     return MailPreviewCard(
