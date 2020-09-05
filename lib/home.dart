@@ -144,13 +144,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       listen: false,
     );
 
-    if (emailStore.currentlySelectedInbox != destination) {
-      emailStore.currentlySelectedInbox = destination;
+    if (emailStore.onMailView) {
+      emailStore.currentlySelectedEmailId = -1;
     }
 
-    if (emailStore.onMailView) {
-      mobileMailNavKey.currentState.pop();
-      emailStore.currentlySelectedEmailId = -1;
+    if (emailStore.currentlySelectedInbox != destination) {
+      emailStore.currentlySelectedInbox = destination;
     }
 
     setState(() {

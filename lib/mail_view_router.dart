@@ -17,17 +17,20 @@ class MailViewRouterDelegate extends RouterDelegate<void>
       return false;
     }
 
-    String currentMailbox =
-        Provider.of<EmailStore>(context, listen: false).currentlySelectedInbox;
-    return Navigator(
-      key: navigatorKey,
-      onPopPage: _handlePopPage,
-      pages: [
-        FadeThroughTransitionPageWrapper(
-          child: InboxPage(destination: currentMailbox),
-          transitionKey: ValueKey(currentMailbox),
-        ),
-      ],
+    return Selector<EmailStore, String>(
+      selector: (context, emailStore) => emailStore.currentlySelectedInbox,
+      builder: (context, currentlySelectedInbox, child) {
+        return Navigator(
+          key: navigatorKey,
+          onPopPage: _handlePopPage,
+          pages: [
+            FadeThroughTransitionPageWrapper(
+              child: InboxPage(destination: currentlySelectedInbox),
+              transitionKey: ValueKey(currentlySelectedInbox),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -36,9 +39,19 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
   @override
   Future<bool> popRoute() {
-    bool onCompose =
-        Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
-            .onCompose;
+    var emailStore =
+        Provider.of<EmailStore>(navigatorKey.currentContext, listen: false);
+    bool onCompose = emailStore.onCompose;
+
+    bool onMailView = emailStore.onMailView;
+
+    if (!(onMailView || onCompose)) {
+      if (emailStore.currentlySelectedInbox != 'Inbox') {
+        emailStore.currentlySelectedInbox = 'Inbox';
+        return SynchronousFuture<bool>(true);
+      }
+      return SynchronousFuture<bool>(false);
+    }
 
     if (onCompose) {
       return SynchronousFuture<bool>(false);
