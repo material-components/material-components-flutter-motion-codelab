@@ -169,6 +169,7 @@ class EmailStore with ChangeNotifier {
   int _currentlySelectedEmailId = -1;
   String _currentlySelectedInbox = 'Inbox';
   bool _onCompose = false;
+  bool _bottomDrawerVisible = false;
   ThemeMode _currentTheme = ThemeMode.system;
   AnimationSpeedSetting _currentAnimationSpeed = AnimationSpeedSetting.normal;
 
@@ -202,6 +203,7 @@ class EmailStore with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get bottomDrawerVisible => _bottomDrawerVisible;
   int get currentlySelectedEmailId => _currentlySelectedEmailId;
   String get currentlySelectedInbox => _currentlySelectedInbox;
   bool get onMailView => _currentlySelectedEmailId > -1;
@@ -211,6 +213,11 @@ class EmailStore with ChangeNotifier {
 
   bool isEmailStarred(Email email) {
     return _categories['Starred'].contains(email);
+  }
+
+  set bottomDrawerVisible(bool value) {
+    _bottomDrawerVisible = value;
+    notifyListeners();
   }
 
   set currentlySelectedEmailId(int value) {

@@ -9,7 +9,9 @@ import 'model/email_store.dart';
 
 class MailViewRouterDelegate extends RouterDelegate<void>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
-  MailViewRouterDelegate();
+  MailViewRouterDelegate({this.drawerController});
+
+  final AnimationController drawerController;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
     bool onMailView = emailStore.onMailView;
 
     if (!(onMailView || onCompose)) {
+      if (emailStore.bottomDrawerVisible) {
+        drawerController.reverse();
+        return SynchronousFuture<bool>(true);
+      }
+
       if (emailStore.currentlySelectedInbox != 'Inbox') {
         emailStore.currentlySelectedInbox = 'Inbox';
         return SynchronousFuture<bool>(true);
