@@ -28,6 +28,11 @@ class MailPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final currentEmailStarred = Provider.of<EmailStore>(
+      context,
+      listen: false,
+    ).isEmailStarred(email);
+
     return OpenContainer(
       openBuilder: (context, closedContainer) {
         return MailViewPage(id: id, email: email);
@@ -92,8 +97,12 @@ class MailPreviewCard extends StatelessWidget {
           },
           secondaryBackground: _DismissibleContainer(
             icon: 'twotone_star',
-            backgroundColor: colorScheme.secondary,
-            iconColor: ReplyColors.black900,
+            backgroundColor: currentEmailStarred
+                ? colorScheme.secondary
+                : Theme.of(context).scaffoldBackgroundColor,
+            iconColor: currentEmailStarred
+                ? colorScheme.onSecondary
+                : colorScheme.onBackground,
             alignment: Alignment.centerRight,
             padding: const EdgeInsetsDirectional.only(end: 20),
           ),
@@ -125,9 +134,11 @@ class _DismissibleContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: backgroundColor,
+    return AnimatedContainer(
       alignment: alignment,
+      color: backgroundColor,
+      curve: standardEasing,
+      duration: kThemeAnimationDuration,
       padding: padding,
       child: Material(
         color: Colors.transparent,
