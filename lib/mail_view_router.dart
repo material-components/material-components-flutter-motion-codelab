@@ -47,6 +47,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
     bool onMailView = emailStore.onMailView;
 
+    // Handles the back button press when we are on the HomePage. When the
+    // drawer is visible reverse the drawer and do nothing else. If the drawer
+    // is not visible then we check if we are on the main mailbox. If we are on
+    // main mailbox then our app will close, if not then it will set the
+    // mailbox to the main mailbox.
     if (!(onMailView || onCompose)) {
       if (emailStore.bottomDrawerVisible) {
         drawerController.reverse();
@@ -60,10 +65,23 @@ class MailViewRouterDelegate extends RouterDelegate<void>
       return SynchronousFuture<bool>(false);
     }
 
+    //Handles the back button when on the ComposePage.
     if (onCompose) {
       return SynchronousFuture<bool>(false);
     }
 
+    // Handles the back button when the bottom drawer is visible on the
+    // MailView. Dismisses the drawer on back button press.
+    if (emailStore.bottomDrawerVisible) {
+      if (onMailView) {
+        drawerController.reverse();
+        return SynchronousFuture<bool>(true);
+      }
+    }
+
+    // Handles the back button press when on the MailView. If there is a route
+    // to pop then pop it, and reset the currentlySelectedEmailId to -1
+    // to notify listeners that we are no longer on the MailView.
     if (navigatorKey.currentState.canPop()) {
       navigatorKey.currentState.pop();
       Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
