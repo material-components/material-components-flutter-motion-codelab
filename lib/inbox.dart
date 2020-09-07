@@ -19,10 +19,10 @@ class InboxPage extends StatelessWidget {
       builder: (context, model, child) {
         return SafeArea(
           bottom: false,
-          child: model.emails[model.currentlySelectedInbox].isEmpty
+          child: model.emails[destination].isEmpty
               ? Center(
                   child: Text(
-                    'Empty in ${model.currentlySelectedInbox.toLowerCase()}',
+                    'Empty in ${destination.toLowerCase()}',
                   ),
                 )
               : ListView.separated(
