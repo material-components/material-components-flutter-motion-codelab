@@ -12,11 +12,6 @@ const String _searchPageLocation = '/reply/search';
 
 class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<ReplyRoutePath> {
-  @override
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  RouterProvider replyState;
-
   ReplyRouterDelegate({@required this.replyState})
       : assert(replyState != null),
         navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
@@ -26,14 +21,18 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
   }
 
   @override
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  RouterProvider replyState;
+
+  @override
   void dispose() {
     replyState.removeListener(notifyListeners);
     super.dispose();
   }
 
   @override
-  ReplyRoutePath get currentConfiguration =>
-      replyState.routePath; //appState.routePath
+  ReplyRoutePath get currentConfiguration => replyState.routePath;
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +70,9 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
     assert(route.willHandlePopInternally ||
         replyState.routePath is ReplySearchPath);
 
-    final bool success = route.didPop(result);
-    if (success) replyState.routePath = const ReplyHomePath();
-    return success;
+    final bool didPop = route.didPop(result);
+    if (didPop) replyState.routePath = const ReplyHomePath();
+    return didPop;
   }
 
   @override

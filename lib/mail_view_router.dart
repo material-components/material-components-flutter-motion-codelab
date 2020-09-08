@@ -65,18 +65,16 @@ class MailViewRouterDelegate extends RouterDelegate<void>
       return SynchronousFuture<bool>(false);
     }
 
-    //Handles the back button when on the ComposePage.
+    // Handles the back button when on the [ComposePage].
     if (onCompose) {
       return SynchronousFuture<bool>(false);
     }
 
     // Handles the back button when the bottom drawer is visible on the
     // MailView. Dismisses the drawer on back button press.
-    if (emailStore.bottomDrawerVisible) {
-      if (onMailView) {
-        drawerController.reverse();
-        return SynchronousFuture<bool>(true);
-      }
+    if (emailStore.bottomDrawerVisible && onMailView) {
+      drawerController.reverse();
+      return SynchronousFuture<bool>(true);
     }
 
     // Handles the back button press when on the MailView. If there is a route
@@ -94,15 +92,16 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
   @override
   Future<void> setNewRoutePath(void configuration) {
-    // should never be called
+    // This function will never be called.
     throw UnimplementedError();
   }
 }
 
 class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
-  FadeThroughTransitionPageWrapper(
-      {@required this.child, @required this.transitionKey})
-      : assert(child != null),
+  FadeThroughTransitionPageWrapper({
+    @required this.child,
+    @required this.transitionKey,
+  })  : assert(child != null),
         assert(transitionKey != null),
         super(
           key: transitionKey,
