@@ -23,8 +23,6 @@ final mobileMailNavKey = GlobalKey<NavigatorState>();
 const double _kFlingVelocity = 2.0;
 const _kAnimationDuration = Duration(milliseconds: 300);
 
-typedef onDestinationChanged = void Function(String value);
-
 class HomePage extends StatefulWidget {
   const HomePage();
 
@@ -247,7 +245,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {
     final drawerSize = constraints.biggest;
     final drawerTop = drawerSize.height;
-    onDestinationChanged updateMailbox = _onDestinationSelected;
+    final ValueChanged<String> updateMailbox = _onDestinationSelected;
 
     final drawerAnimation = RelativeRectTween(
       begin: RelativeRect.fromLTRB(0.0, drawerTop, 0.0, 0.0),
@@ -575,7 +573,7 @@ class _BottomDrawerDestinations extends StatelessWidget {
   final List<_Destination> destinations;
   final AnimationController drawerController;
   final AnimationController dropArrowController;
-  final onDestinationChanged onItemTapped;
+  final ValueChanged<String> onItemTapped;
 
   @override
   Widget build(BuildContext context) {
