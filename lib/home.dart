@@ -358,72 +358,76 @@ class _AnimatedBottomAppBar extends StatelessWidget {
         return SizeTransition(
           sizeFactor: bottomAppBarCurve,
           axisAlignment: -1,
-          child: BottomAppBar(
-            shape: const WaterfallNotchedRectangle(),
-            notchMargin: 6,
-            child: Container(
-              height: kToolbarHeight,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    onTap: toggleBottomDrawerVisibility,
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 16),
-                        RotationTransition(
-                          turns: Tween(
-                            begin: 0.0,
-                            end: 1.0,
-                          ).animate(dropArrowCurve),
-                          child: const Icon(
-                            Icons.arrow_drop_up,
-                            color: ReplyColors.white50,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(top: 2),
+            child: BottomAppBar(
+              shape: const WaterfallNotchedRectangle(),
+              notchMargin: 6,
+              child: Container(
+                color: Colors.transparent,
+                height: kToolbarHeight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                      onTap: toggleBottomDrawerVisibility,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 16),
+                          RotationTransition(
+                            turns: Tween(
+                              begin: 0.0,
+                              end: 1.0,
+                            ).animate(dropArrowCurve),
+                            child: const Icon(
+                              Icons.arrow_drop_up,
+                              color: ReplyColors.white50,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        const _ReplyLogo(),
-                        const SizedBox(width: 10),
-                        AnimatedOpacity(
-                          opacity:
-                              bottomDrawerVisible || onMailView ? 0.0 : 1.0,
-                          duration: _kAnimationDuration,
-                          curve: standardEasing,
-                          child: Selector<EmailStore, String>(
-                            selector: (context, emailStore) =>
-                                emailStore.currentlySelectedInbox,
-                            builder: (
-                              context,
-                              currentlySelectedInbox,
-                              child,
-                            ) {
-                              return Text(
+                          const SizedBox(width: 8),
+                          const _ReplyLogo(),
+                          const SizedBox(width: 10),
+                          AnimatedOpacity(
+                            opacity:
+                                bottomDrawerVisible || onMailView ? 0.0 : 1.0,
+                            duration: _kAnimationDuration,
+                            curve: standardEasing,
+                            child: Selector<EmailStore, String>(
+                              selector: (context, emailStore) =>
+                                  emailStore.currentlySelectedInbox,
+                              builder: (
+                                context,
                                 currentlySelectedInbox,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(
-                                      color: ReplyColors.white50,
-                                    ),
-                              );
-                            },
+                                child,
+                              ) {
+                                return Text(
+                                  currentlySelectedInbox,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(
+                                        color: ReplyColors.white50,
+                                      ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      color: Colors.transparent,
-                      child: _BottomAppBarActionItems(
-                        drawerController: drawerController,
-                        drawerVisible: bottomDrawerVisible,
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Container(
+                        color: Colors.transparent,
+                        child: _BottomAppBarActionItems(
+                          drawerController: drawerController,
+                          drawerVisible: bottomDrawerVisible,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
