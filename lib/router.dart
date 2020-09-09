@@ -49,12 +49,12 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             pages: [
               SharedAxisTransitionPageWrapper(
                 transitionKey: ValueKey('home'),
-                child: const HomePage(),
+                screen: const HomePage(),
               ),
               if (routePath is ReplySearchPath)
                 SharedAxisTransitionPageWrapper(
                   transitionKey: ValueKey('search'),
-                  child: const SearchPage(),
+                  screen: const SearchPage(),
                 ),
             ],
           );
@@ -98,12 +98,12 @@ class ReplySearchPath extends ReplyRoutePath {
 
 class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
   SharedAxisTransitionPageWrapper(
-      {@required this.child, @required this.transitionKey})
-      : assert(child != null),
+      {@required this.screen, @required this.transitionKey})
+      : assert(screen != null),
         assert(transitionKey != null),
         super(
           key: transitionKey,
-          pageBuilder: (context, animation, secondaryAnimation) {
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SharedAxisTransition(
               fillColor: Theme.of(context).cardColor,
               animation: animation,
@@ -112,9 +112,12 @@ class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
               child: child,
             );
           },
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return screen;
+          },
         );
 
-  final Widget child;
+  final Widget screen;
   final ValueKey transitionKey;
 }
 

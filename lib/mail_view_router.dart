@@ -27,7 +27,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           onPopPage: _handlePopPage,
           pages: [
             FadeThroughTransitionPageWrapper(
-              child: InboxPage(destination: currentlySelectedInbox),
+              mailbox: InboxPage(destination: currentlySelectedInbox),
               transitionKey: ValueKey(currentlySelectedInbox),
             ),
           ],
@@ -99,13 +99,13 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
 class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
   FadeThroughTransitionPageWrapper({
-    @required this.child,
+    @required this.mailbox,
     @required this.transitionKey,
-  })  : assert(child != null),
+  })  : assert(mailbox != null),
         assert(transitionKey != null),
         super(
           key: transitionKey,
-          pageBuilder: (context, animation, secondaryAnimation) {
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeThroughTransition(
               fillColor: Theme.of(context).scaffoldBackgroundColor,
               animation: animation,
@@ -113,8 +113,11 @@ class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
               child: child,
             );
           },
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return mailbox;
+          },
         );
 
-  final Widget child;
+  final Widget mailbox;
   final ValueKey transitionKey;
 }
