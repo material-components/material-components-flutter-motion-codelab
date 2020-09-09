@@ -168,7 +168,8 @@ class EmailStore with ChangeNotifier {
 
   int _currentlySelectedEmailId = -1;
   String _currentlySelectedInbox = 'Inbox';
-  bool _onSearchPage = false;
+  bool _onCompose = false;
+  bool _bottomDrawerVisible = false;
   ThemeMode _currentTheme = ThemeMode.system;
   SlowMotionSpeedSetting _currentSlowMotionSpeed =
       SlowMotionSpeedSetting.normal;
@@ -203,15 +204,21 @@ class EmailStore with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get bottomDrawerVisible => _bottomDrawerVisible;
   int get currentlySelectedEmailId => _currentlySelectedEmailId;
   String get currentlySelectedInbox => _currentlySelectedInbox;
   bool get onMailView => _currentlySelectedEmailId > -1;
-  bool get onSearchPage => _onSearchPage;
+  bool get onCompose => _onCompose;
   ThemeMode get themeMode => _currentTheme;
   SlowMotionSpeedSetting get slowMotionSpeed => _currentSlowMotionSpeed;
 
   bool isEmailStarred(Email email) {
     return _categories['Starred'].contains(email);
+  }
+
+  set bottomDrawerVisible(bool value) {
+    _bottomDrawerVisible = value;
+    notifyListeners();
   }
 
   set currentlySelectedEmailId(int value) {
@@ -224,11 +231,6 @@ class EmailStore with ChangeNotifier {
     notifyListeners();
   }
 
-  set onSearchPage(bool value) {
-    _onSearchPage = value;
-    notifyListeners();
-  }
-
   set themeMode(ThemeMode theme) {
     _currentTheme = theme;
     notifyListeners();
@@ -237,5 +239,10 @@ class EmailStore with ChangeNotifier {
   set slowMotionSpeed(SlowMotionSpeedSetting speed) {
     _currentSlowMotionSpeed = speed;
     timeDilation = slowMotionSpeed.value;
+  }
+
+  set onCompose(bool value) {
+    _onCompose = value;
+    notifyListeners();
   }
 }

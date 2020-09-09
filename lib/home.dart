@@ -1,17 +1,19 @@
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/model/router_provider.dart';
 
-import 'app.dart';
 import 'bottom_drawer.dart';
 import 'colors.dart';
 import 'compose_page.dart';
-import 'inbox.dart';
+import 'mail_view_router.dart';
 import 'model/email_store.dart';
-import 'search_page.dart';
+import 'router.dart';
 import 'settings_bottom_sheet.dart';
 import 'waterfall_notched_rectangle.dart';
 
@@ -36,9 +38,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> _drawerCurve;
   Animation<double> _dropArrowCurve;
   Animation<double> _bottomAppBarCurve;
-  int _selectedIndex = 0;
-  Widget _currentInbox;
-  UniqueKey _inboxKey = UniqueKey();
+
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
   final _navigationDestinations = <_Destination>[
     _Destination(
@@ -86,16 +86,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _currentInbox = InboxPage(
-      key: _inboxKey,
-      destination: 'Inbox',
-    );
-
     _drawerController = AnimationController(
       duration: _kAnimationDuration,
       value: 0,
       vsync: this,
     )..addListener(() {
+        if (_drawerController.status == AnimationStatus.dismissed &&
+            _drawerController.value == 0) {
+          Provider.of<EmailStore>(
+            context,
+            listen: false,
+          ).bottomDrawerVisible = false;
+        }
+
         if (_drawerController.value < 0.01) {
           setState(() {
             //Reload state when drawer is at its smallest to toggle visibility
@@ -143,31 +146,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _onDestinationSelected(int index, String destination) {
+  void _onDestinationSelected(String destination) {
     var emailStore = Provider.of<EmailStore>(
       context,
       listen: false,
     );
 
-    if (emailStore.currentlySelectedInbox != destination) {
-      _inboxKey = UniqueKey();
-    }
-
-    emailStore.currentlySelectedInbox = destination;
-
     if (emailStore.onMailView) {
-      mobileMailNavKey.currentState.pop();
-
       emailStore.currentlySelectedEmailId = -1;
     }
 
-    setState(() {
-      _selectedIndex = index;
-      _currentInbox = InboxPage(
-        key: _inboxKey,
-        destination: destination,
-      );
-    });
+    if (emailStore.currentlySelectedInbox != destination) {
+      emailStore.currentlySelectedInbox = destination;
+    }
+
+    setState(() {});
   }
 
   bool get _bottomDrawerVisible {
@@ -178,6 +171,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void _toggleBottomDrawerVisibility() {
     if (_drawerController.value < 0.4) {
+      Provider.of<EmailStore>(
+        context,
+        listen: false,
+      ).bottomDrawerVisible = true;
       _drawerController.animateTo(0.4, curve: standardEasing);
       _dropArrowController.animateTo(0.35, curve: standardEasing);
       return;
@@ -249,6 +246,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {
     final drawerSize = constraints.biggest;
     final drawerTop = drawerSize.height;
+    final ValueChanged<String> updateMailbox = _onDestinationSelected;
 
     final drawerAnimation = RelativeRectTween(
       begin: RelativeRect.fromLTRB(0.0, drawerTop, 0.0, 0.0),
@@ -261,8 +259,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
-          child: _MailNavigator(
-            child: _currentInbox,
+          child: _MailRouter(
+            drawerController: _drawerController,
           ),
         ),
         GestureDetector(
@@ -297,8 +295,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 destinations: _navigationDestinations,
                 drawerController: _drawerController,
                 dropArrowController: _dropArrowController,
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onDestinationSelected,
+                onItemTapped: updateMailbox,
               ),
               trailing: _BottomDrawerFolderSection(folders: _folders),
             ),
@@ -310,68 +307,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _willPopCallback,
-      child: _SharedAxisTransitionSwitcher(
-        defaultChild: Scaffold(
-          extendBody: true,
-          body: LayoutBuilder(
-            builder: _buildStack,
-          ),
-          bottomNavigationBar: _AnimatedBottomAppBar(
-            bottomAppBarController: _bottomAppBarController,
-            bottomAppBarCurve: _bottomAppBarCurve,
-            bottomDrawerVisible: _bottomDrawerVisible,
-            drawerController: _drawerController,
-            dropArrowCurve: _dropArrowCurve,
-            navigationDestinations: _navigationDestinations,
-            selectedIndex: _selectedIndex,
-            toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
-          ),
-          floatingActionButton: _bottomDrawerVisible
-              ? null
-              : const Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: 8),
-                  child: _ReplyFab(),
-                ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-        ),
+    return Scaffold(
+      extendBody: true,
+      body: LayoutBuilder(
+        builder: _buildStack,
       ),
+      bottomNavigationBar: _AnimatedBottomAppBar(
+        bottomAppBarController: _bottomAppBarController,
+        bottomAppBarCurve: _bottomAppBarCurve,
+        bottomDrawerVisible: _bottomDrawerVisible,
+        drawerController: _drawerController,
+        dropArrowCurve: _dropArrowCurve,
+        toggleBottomDrawerVisibility: _toggleBottomDrawerVisibility,
+      ),
+      floatingActionButton: _bottomDrawerVisible
+          ? null
+          : const Padding(
+              padding: EdgeInsetsDirectional.only(bottom: 8),
+              child: _ReplyFab(),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
-  }
-
-  Future<bool> _willPopCallback() async {
-    // This function handles when a back button or back gesture is initiated.
-    // It checks first if we are on the SearchPage and if we are then it updates
-    // the onSearchPage property in our EmailStore to "pop" us off the
-    // SearchPage. If we are not on the SearchPage then we check if our
-    // navigator has any routes to pop, and if it does then we pop one route
-    // from the stack and update our EmailStore's currentlySelectedEmailId
-    // to indicate we are back on the HomePage.
-    var onSearchPage = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    ).onSearchPage;
-
-    if (onSearchPage) {
-      Provider.of<EmailStore>(
-        context,
-        listen: false,
-      ).onSearchPage = false;
-      return false;
-    }
-
-    if (mobileMailNavKey.currentState.canPop()) {
-      mobileMailNavKey.currentState.pop();
-      Provider.of<EmailStore>(
-        context,
-        listen: false,
-      ).currentlySelectedEmailId = -1;
-      return false;
-    }
-
-    return true;
   }
 }
 
@@ -382,8 +338,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
     this.bottomDrawerVisible,
     this.drawerController,
     this.dropArrowCurve,
-    this.navigationDestinations,
-    this.selectedIndex,
     this.toggleBottomDrawerVisibility,
   });
 
@@ -392,8 +346,6 @@ class _AnimatedBottomAppBar extends StatelessWidget {
   final bool bottomDrawerVisible;
   final AnimationController drawerController;
   final Animation<double> dropArrowCurve;
-  final List<_Destination> navigationDestinations;
-  final int selectedIndex;
   final VoidCallback toggleBottomDrawerVisibility;
 
   @override
@@ -439,12 +391,24 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                               bottomDrawerVisible || onMailView ? 0.0 : 1.0,
                           duration: _kAnimationDuration,
                           curve: standardEasing,
-                          child: Text(
-                            navigationDestinations[selectedIndex].name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(color: ReplyColors.white50),
+                          child: Selector<EmailStore, String>(
+                            selector: (context, emailStore) =>
+                                emailStore.currentlySelectedInbox,
+                            builder: (
+                              context,
+                              currentlySelectedInbox,
+                              child,
+                            ) {
+                              return Text(
+                                currentlySelectedInbox,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(
+                                      color: ReplyColors.white50,
+                                    ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -511,7 +475,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
           child: drawerVisible
               ? Align(
                   key: UniqueKey(),
-                  alignment: Alignment.centerRight,
+                  alignment: AlignmentDirectional.bottomEnd,
                   child: IconButton(
                     icon: const Icon(Icons.settings),
                     color: ReplyColors.white50,
@@ -578,15 +542,15 @@ class _BottomAppBarActionItems extends StatelessWidget {
                       ],
                     )
                   : Align(
-                      alignment: Alignment.centerRight,
+                      alignment: AlignmentDirectional.bottomEnd,
                       child: IconButton(
                         icon: const Icon(Icons.search),
                         color: ReplyColors.white50,
                         onPressed: () {
-                          Provider.of<EmailStore>(
+                          Provider.of<RouterProvider>(
                             context,
                             listen: false,
-                          ).onSearchPage = true;
+                          ).routePath = ReplySearchPath();
                         },
                       ),
                     ),
@@ -601,19 +565,16 @@ class _BottomDrawerDestinations extends StatelessWidget {
     @required this.destinations,
     @required this.drawerController,
     @required this.dropArrowController,
-    @required this.selectedIndex,
     @required this.onItemTapped,
   })  : assert(destinations != null),
         assert(drawerController != null),
         assert(dropArrowController != null),
-        assert(selectedIndex != null),
         assert(onItemTapped != null);
 
   final List<_Destination> destinations;
   final AnimationController drawerController;
   final AnimationController dropArrowController;
-  final int selectedIndex;
-  final void Function(int, String) onItemTapped;
+  final ValueChanged<String> onItemTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -624,35 +585,34 @@ class _BottomDrawerDestinations extends StatelessWidget {
         for (var destination in destinations)
           InkWell(
             onTap: () {
+              onItemTapped(destination.name);
               drawerController.reverse();
               dropArrowController.forward();
-              Future.delayed(
-                Duration(milliseconds: drawerController.value == 1 ? 300 : 120),
-                () {
-                  // Wait until animations are complete to reload the state.
-                  // Delay scales with the timeDilation value of the gallery.
-                  onItemTapped(destination.index, destination.name);
-                },
-              );
             },
-            child: ListTile(
-              leading: ImageIcon(
-                AssetImage(
-                  destination.icon,
-                  package: _assetsPackage,
-                ),
-                color: destination.index == selectedIndex
-                    ? theme.colorScheme.secondary
-                    : ReplyColors.white50.withOpacity(0.64),
-              ),
-              title: Text(
-                destination.name,
-                style: theme.textTheme.bodyText2.copyWith(
-                  color: destination.index == selectedIndex
-                      ? theme.colorScheme.secondary
-                      : ReplyColors.white50.withOpacity(0.64),
-                ),
-              ),
+            child: Selector<EmailStore, String>(
+              selector: (context, emailStore) =>
+                  emailStore.currentlySelectedInbox,
+              builder: (context, currentlySelectedInbox, child) {
+                return ListTile(
+                  leading: ImageIcon(
+                    AssetImage(
+                      destination.icon,
+                      package: _assetsPackage,
+                    ),
+                    color: destination.name == currentlySelectedInbox
+                        ? theme.colorScheme.secondary
+                        : ReplyColors.white50.withOpacity(0.64),
+                  ),
+                  title: Text(
+                    destination.name,
+                    style: theme.textTheme.bodyText2.copyWith(
+                      color: destination.name == currentlySelectedInbox
+                          ? theme.colorScheme.secondary
+                          : ReplyColors.white50.withOpacity(0.64),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
       ],
@@ -710,42 +670,21 @@ class _BottomDrawerFolderSection extends StatelessWidget {
   }
 }
 
-class _MailNavigator extends StatefulWidget {
-  const _MailNavigator({@required this.child}) : assert(child != null);
+class _MailRouter extends StatelessWidget {
+  const _MailRouter({this.drawerController});
 
-  final Widget child;
-
-  @override
-  _MailNavigatorState createState() => _MailNavigatorState();
-}
-
-class _MailNavigatorState extends State<_MailNavigator> {
-  static const inboxRoute = '/reply/inbox';
+  final AnimationController drawerController;
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: mobileMailNavKey,
-      initialRoute: inboxRoute,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case inboxRoute:
-            return MaterialPageRoute<void>(
-              builder: (context) {
-                return _FadeThroughTransitionSwitcher(
-                  fillColor: Theme.of(context).scaffoldBackgroundColor,
-                  child: widget.child,
-                );
-              },
-              settings: settings,
-            );
-            break;
-          case ReplyApp.composeRoute:
-            return ReplyApp.createComposeRoute(settings);
-            break;
-        }
-        return null;
-      },
+    final RootBackButtonDispatcher backButtonDispatcher =
+        Router.of(context).backButtonDispatcher as RootBackButtonDispatcher;
+
+    return Router(
+      routerDelegate:
+          MailViewRouterDelegate(drawerController: drawerController),
+      backButtonDispatcher: ChildBackButtonDispatcher(backButtonDispatcher)
+        ..takePriority(),
     );
   }
 }
@@ -808,6 +747,12 @@ class _ReplyFabState extends State<_ReplyFab>
             return const ComposePage();
           },
           openColor: theme.cardColor,
+          onClosed: (success) {
+            Provider.of<EmailStore>(
+              context,
+              listen: false,
+            ).onCompose = false;
+          },
           closedShape: circleFabBorder,
           closedColor: theme.colorScheme.secondary,
           closedElevation: 6,
@@ -816,7 +761,13 @@ class _ReplyFabState extends State<_ReplyFab>
               message: tooltip,
               child: InkWell(
                 customBorder: circleFabBorder,
-                onTap: openContainer,
+                onTap: () {
+                  Provider.of<EmailStore>(
+                    context,
+                    listen: false,
+                  ).onCompose = true;
+                  openContainer();
+                },
                 child: SizedBox(
                   height: _mobileFabDimension,
                   width: _mobileFabDimension,
@@ -855,36 +806,6 @@ class _FadeThroughTransitionSwitcher extends StatelessWidget {
         );
       },
       child: child,
-    );
-  }
-}
-
-class _SharedAxisTransitionSwitcher extends StatelessWidget {
-  const _SharedAxisTransitionSwitcher({
-    @required this.defaultChild,
-  }) : assert(defaultChild != null);
-
-  final Widget defaultChild;
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<EmailStore, bool>(
-      selector: (context, emailStore) => emailStore.onSearchPage,
-      builder: (context, onSearchPage, child) {
-        return PageTransitionSwitcher(
-          reverse: !onSearchPage,
-          transitionBuilder: (child, animation, secondaryAnimation) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          child: onSearchPage ? const SearchPage() : defaultChild,
-        );
-      },
     );
   }
 }
