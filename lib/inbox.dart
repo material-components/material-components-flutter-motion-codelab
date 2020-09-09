@@ -5,9 +5,7 @@ import 'mail_card_preview.dart';
 import 'model/email_store.dart';
 
 class InboxPage extends StatelessWidget {
-  const InboxPage({Key key, @required this.destination})
-      : assert(destination != null),
-        super(key: key);
+  const InboxPage({@required this.destination}) : assert(destination != null);
 
   final String destination;
 
