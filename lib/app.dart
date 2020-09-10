@@ -61,7 +61,7 @@ ThemeData _buildReplyLightTheme(BuildContext context) {
     bottomAppBarColor: ReplyColors.blue700,
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: ReplyColors.blue700,
-      modalBackgroundColor: Colors.white.withOpacity(0.4),
+      modalBackgroundColor: Colors.white.withOpacity(0.7),
     ),
     cardColor: ReplyColors.white50,
     chipTheme: _buildChipTheme(
@@ -95,7 +95,7 @@ ThemeData _buildReplyDarkTheme(BuildContext context) {
     bottomAppBarColor: ReplyColors.darkBottomAppBarBackground,
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: ReplyColors.darkDrawerBackground,
-      modalBackgroundColor: Colors.black.withOpacity(0.8),
+      modalBackgroundColor: Colors.black.withOpacity(0.7),
     ),
     cardColor: ReplyColors.darkCardBackground,
     chipTheme: _buildChipTheme(

@@ -272,10 +272,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             maintainAnimation: true,
             maintainState: true,
             visible: _bottomDrawerVisible,
-            child: AnimatedOpacity(
-              opacity: _bottomDrawerVisible ? 1.0 : 0.0,
-              curve: standardEasing,
-              duration: _kAnimationDuration,
+            child: FadeTransition(
+              opacity: _drawerCurve,
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
@@ -350,6 +348,10 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var fadeOut = Tween<double>(begin: 1, end: -1).animate(
+      drawerController.drive(CurveTween(curve: standardEasing)),
+    );
+
     return Selector<EmailStore, bool>(
       selector: (context, emailStore) => emailStore.onMailView,
       builder: (context, onMailView, child) {
@@ -389,30 +391,32 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                           const SizedBox(width: 8),
                           const _ReplyLogo(),
                           const SizedBox(width: 10),
-                          AnimatedOpacity(
-                            opacity:
-                                bottomDrawerVisible || onMailView ? 0.0 : 1.0,
-                            duration: _kAnimationDuration,
-                            curve: standardEasing,
-                            child: Selector<EmailStore, String>(
-                              selector: (context, emailStore) =>
-                                  emailStore.currentlySelectedInbox,
-                              builder: (
-                                context,
-                                currentlySelectedInbox,
-                                child,
-                              ) {
-                                return Text(
-                                  currentlySelectedInbox,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(
-                                        color: ReplyColors.white50,
-                                      ),
-                                );
-                              },
-                            ),
+                          _FadeThroughTransitionSwitcher(
+                            fillColor: Colors.transparent,
+                            child: onMailView
+                                ? const SizedBox(width: 48)
+                                : FadeTransition(
+                                    opacity: fadeOut,
+                                    child: Selector<EmailStore, String>(
+                                      selector: (context, emailStore) =>
+                                          emailStore.currentlySelectedInbox,
+                                      builder: (
+                                        context,
+                                        currentlySelectedInbox,
+                                        child,
+                                      ) {
+                                        return Text(
+                                          currentlySelectedInbox,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                color: ReplyColors.white50,
+                                              ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
