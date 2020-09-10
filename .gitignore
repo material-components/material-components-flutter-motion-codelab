@@ -6,5 +6,6 @@
 .vscode
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 build/
 *.iml

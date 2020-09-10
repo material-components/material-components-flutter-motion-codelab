@@ -1,35 +1,35 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/router.dart';
 
 import 'colors.dart';
-import 'compose_page.dart';
-import 'home.dart';
 import 'model/email_store.dart';
+import 'model/router_provider.dart';
 
-final rootNavKey = GlobalKey<NavigatorState>();
-
-class ReplyApp extends StatelessWidget {
+class ReplyApp extends StatefulWidget {
   const ReplyApp();
 
-  static const String homeRoute = '/reply';
-  static const String composeRoute = '/reply/compose';
+  @override
+  _ReplyAppState createState() => _ReplyAppState();
+}
 
-  static Route createComposeRoute(RouteSettings settings) {
-    return PageRouteBuilder<void>(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const ComposePage(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeThroughTransition(
-          fillColor: Theme.of(context).cardColor,
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          child: child,
-        );
-      },
-      settings: settings,
-    );
+class _ReplyAppState extends State<ReplyApp> {
+  final RouterProvider _replyState = RouterProvider();
+  final ReplyRouteInformationParser _routeInformationParser =
+      ReplyRouteInformationParser();
+  ReplyRouterDelegate _routerDelegate;
+
+  @override
+  void initState() {
+    super.initState();
+    _routerDelegate = ReplyRouterDelegate(replyState: _replyState);
+  }
+
+  @override
+  void dispose() {
+    _routerDelegate.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,27 +41,13 @@ class ReplyApp extends StatelessWidget {
       child: Selector<EmailStore, ThemeMode>(
           selector: (context, emailStore) => emailStore.themeMode,
           builder: (context, themeMode, child) {
-            return MaterialApp(
-              navigatorKey: rootNavKey,
+            return MaterialApp.router(
+              routeInformationParser: _routeInformationParser,
+              routerDelegate: _routerDelegate,
               themeMode: themeMode,
               title: 'Reply',
               darkTheme: _buildReplyDarkTheme(context),
               theme: _buildReplyLightTheme(context),
-              initialRoute: homeRoute,
-              onGenerateRoute: (settings) {
-                switch (settings.name) {
-                  case homeRoute:
-                    return MaterialPageRoute<void>(
-                      builder: (context) => const HomePage(),
-                      settings: settings,
-                    );
-                    break;
-                  case composeRoute:
-                    return createComposeRoute(settings);
-                    break;
-                }
-                return null;
-              },
             );
           }),
     );
