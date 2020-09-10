@@ -14,7 +14,6 @@ The starter code is available on the default `develop` branch, and the complete
 code is available on the `complete` branch, which can you can checkout by
 running `git checkout complete`.
 
-Android|iOS
----|---
-<img src="screenshots/reply-transitions-android.gif" alt="Reply transitions for Android"/>
-<img src="screenshots/reply-transitions-iOS.gif" alt="Reply transitions for iOS"/>
+| Android | iOS |
+|----|----|
+| <img src="screenshots/reply-transitions-android.gif" alt="Reply transitions for Android" width="720" height="1080"/> | <img src="screenshots/reply-transitions-iOS.gif" alt="Reply transitions for iOS" width="720" height="1080"/> |
