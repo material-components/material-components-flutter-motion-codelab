@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,9 +25,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           key: navigatorKey,
           onPopPage: _handlePopPage,
           pages: [
-            FadeThroughTransitionPageWrapper(
-              mailbox: InboxPage(destination: currentlySelectedInbox),
-              transitionKey: ValueKey(currentlySelectedInbox),
+            // TODO: Add Fade through transition between mailbox pages (Motion)
+            TransitionBuilderPage(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return InboxPage(destination: currentlySelectedInbox);
+              },
             ),
           ],
         );
@@ -67,6 +68,8 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 
     // Handles the back button when on the [ComposePage].
     if (onCompose) {
+      // TODO: Add Container Transform from FAB to compose email page (Motion)
+      emailStore.onCompose = false;
       return SynchronousFuture<bool>(false);
     }
 
@@ -97,27 +100,4 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   }
 }
 
-class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
-  FadeThroughTransitionPageWrapper({
-    @required this.mailbox,
-    @required this.transitionKey,
-  })  : assert(mailbox != null),
-        assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeThroughTransition(
-              fillColor: Theme.of(context).scaffoldBackgroundColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              child: child,
-            );
-          },
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return mailbox;
-          },
-        );
-
-  final Widget mailbox;
-  final ValueKey transitionKey;
-}
+// TODO: Add Fade through transition between mailbox pages (Motion)

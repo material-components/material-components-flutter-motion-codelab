@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,14 +46,17 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             key: navigatorKey,
             onPopPage: _handlePopPage,
             pages: [
-              SharedAxisTransitionPageWrapper(
-                transitionKey: ValueKey('home'),
-                screen: const HomePage(),
+              // TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
+              TransitionBuilderPage(
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return const HomePage();
+                },
               ),
               if (routePath is ReplySearchPath)
-                SharedAxisTransitionPageWrapper(
-                  transitionKey: ValueKey('search'),
-                  screen: const SearchPage(),
+                TransitionBuilderPage(
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return const SearchPage();
+                  },
                 ),
             ],
           );
@@ -96,30 +98,7 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
-class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
-  SharedAxisTransitionPageWrapper(
-      {@required this.screen, @required this.transitionKey})
-      : assert(screen != null),
-        assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return screen;
-          },
-        );
-
-  final Widget screen;
-  final ValueKey transitionKey;
-}
+// TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
 
 class ReplyRouteInformationParser
     extends RouteInformationParser<ReplyRoutePath> {
