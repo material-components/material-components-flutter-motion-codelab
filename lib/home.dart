@@ -744,6 +744,7 @@ class _ReplyFabState extends State<_ReplyFab>
         // TODO: Add Container Transform from FAB to compose email page (Motion)
         return Material(
           color: theme.colorScheme.secondary,
+          shape: circleFabBorder,
           child: Tooltip(
             message: tooltip,
             child: InkWell(
