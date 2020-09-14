@@ -1,0 +1,11 @@
+.DS_Store
+.dart_tool/
+.pub/
+.idea
+.atom
+.vscode
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
