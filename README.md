@@ -10,7 +10,7 @@ This repo houses the source for the
 during which you will build Material transitions into an example email app
 called Reply.
 
-The starter code is available on the default `develop` branch, and the complete
+The starter code is available on the default `starter` branch, and the complete
 code is available on the `complete` branch, which can you can checkout by
 running `git checkout complete`.
 
