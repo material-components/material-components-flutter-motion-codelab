@@ -31,7 +31,7 @@ dependencies:
   provider: ^4.3.2
   animations: ^1.1.2
   google_fonts: ^1.1.0
-  flutter_gallery_assets: ^0.2.5
+  flutter_gallery_assets: ^0.2.6
 
 dev_dependencies:
   flutter_test:
