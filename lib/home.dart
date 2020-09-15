@@ -253,7 +253,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ).animate(_drawerCurve);
 
     return Stack(
-      overflow: Overflow.visible,
+      clipBehavior: Clip.none,
       key: _bottomDrawerKey,
       children: [
         NotificationListener<ScrollNotification>(
