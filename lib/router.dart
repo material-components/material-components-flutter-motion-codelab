@@ -96,6 +96,8 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
+// TODO: Prefer to use TransitionBuilderPage once it lands in stable.
+// https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
 class SharedAxisTransitionPageWrapper extends Page {
   const SharedAxisTransitionPageWrapper(
       {@required this.screen, @required this.transitionKey})
@@ -109,16 +111,17 @@ class SharedAxisTransitionPageWrapper extends Page {
   @override
   Route createRoute(BuildContext context) {
     return PageRouteBuilder(
-        settings: this,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return SharedAxisTransition(
-            fillColor: Theme.of(context).cardColor,
-            animation: animation,
-            secondaryAnimation: secondaryAnimation,
-            transitionType: SharedAxisTransitionType.scaled,
-            child: screen,
-          );
-        });
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return SharedAxisTransition(
+        fillColor: Theme.of(context).cardColor,
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        transitionType: SharedAxisTransitionType.scaled,
+        child: child,
+      );
+    }, pageBuilder: (context, animation, secondaryAnimation) {
+      return screen;
+    });
   }
 }
 

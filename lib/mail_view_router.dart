@@ -97,6 +97,8 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   }
 }
 
+// TODO: Prefer to use TransitionBuilderPage once it lands in stable.
+// https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
 class FadeThroughTransitionPageWrapper extends Page {
   FadeThroughTransitionPageWrapper({
     @required this.mailbox,
@@ -112,13 +114,16 @@ class FadeThroughTransitionPageWrapper extends Page {
   Route createRoute(BuildContext context) {
     return PageRouteBuilder(
         settings: this,
-        pageBuilder: (context, animation, secondaryAnimation) {
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeThroughTransition(
             fillColor: Theme.of(context).scaffoldBackgroundColor,
             animation: animation,
             secondaryAnimation: secondaryAnimation,
-            child: mailbox,
+            child: child,
           );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return mailbox;
         });
   }
 }
