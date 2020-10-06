@@ -111,17 +111,19 @@ class SharedAxisTransitionPageWrapper extends Page {
   @override
   Route createRoute(BuildContext context) {
     return PageRouteBuilder(
+        settings: this,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return SharedAxisTransition(
-        fillColor: Theme.of(context).cardColor,
-        animation: animation,
-        secondaryAnimation: secondaryAnimation,
-        transitionType: SharedAxisTransitionType.scaled,
-        child: child,
-      );
-    }, pageBuilder: (context, animation, secondaryAnimation) {
-      return screen;
-    });
+          return SharedAxisTransition(
+            fillColor: Theme.of(context).cardColor,
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.scaled,
+            child: child,
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return screen;
+        });
   }
 }
 
