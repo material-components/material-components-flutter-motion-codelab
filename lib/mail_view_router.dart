@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reply/transition_page_builder.dart';
+import 'package:reply/custom_transition_page.dart';
 
 import 'home.dart';
 import 'inbox.dart';
@@ -27,7 +27,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           onPopPage: _handlePopPage,
           pages: [
             // TODO: Add Fade through transition between mailbox pages (Motion)
-            CustomTransitionPageBuilder(
+            CustomTransitionPage(
               transitionKey: ValueKey(currentlySelectedInbox),
               screen: InboxPage(
                 destination: currentlySelectedInbox,

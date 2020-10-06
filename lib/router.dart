@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/custom_transition_page.dart';
 import 'package:reply/home.dart';
 import 'package:reply/search_page.dart';
-import 'package:reply/transition_page_builder.dart';
 
 import 'model/router_provider.dart';
 
@@ -48,12 +48,12 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             onPopPage: _handlePopPage,
             pages: [
               // TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
-              const CustomTransitionPageBuilder(
+              const CustomTransitionPage(
                 transitionKey: ValueKey('Home'),
                 screen: HomePage(),
               ),
               if (routePath is ReplySearchPath)
-                const CustomTransitionPageBuilder(
+                const CustomTransitionPage(
                   transitionKey: ValueKey('Search'),
                   screen: SearchPage(),
                 ),
