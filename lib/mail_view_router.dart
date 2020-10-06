@@ -97,27 +97,28 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   }
 }
 
-class FadeThroughTransitionPageWrapper extends TransitionBuilderPage {
+class FadeThroughTransitionPageWrapper extends Page {
   FadeThroughTransitionPageWrapper({
     @required this.mailbox,
     @required this.transitionKey,
   })  : assert(mailbox != null),
         assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeThroughTransition(
-              fillColor: Theme.of(context).scaffoldBackgroundColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              child: child,
-            );
-          },
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return mailbox;
-          },
-        );
+        super(key: transitionKey);
 
   final Widget mailbox;
   final ValueKey transitionKey;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+        settings: this,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return FadeThroughTransition(
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: mailbox,
+          );
+        });
+  }
 }

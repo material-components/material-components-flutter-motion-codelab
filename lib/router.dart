@@ -96,29 +96,30 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
-class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
+class SharedAxisTransitionPageWrapper extends Page {
   SharedAxisTransitionPageWrapper(
       {@required this.screen, @required this.transitionKey})
       : assert(screen != null),
         assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return screen;
-          },
-        );
+        super(key: transitionKey);
 
   final Widget screen;
   final ValueKey transitionKey;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+        settings: this,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return SharedAxisTransition(
+            fillColor: Theme.of(context).cardColor,
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.scaled,
+            child: screen,
+          );
+        });
+  }
 }
 
 class ReplyRouteInformationParser
