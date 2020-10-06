@@ -28,6 +28,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           pages: [
             // TODO: Add Fade through transition between mailbox pages (Motion)
             CustomTransitionPageBuilder(
+              transitionKey: ValueKey(currentlySelectedInbox),
               screen: InboxPage(
                 destination: currentlySelectedInbox,
               ),

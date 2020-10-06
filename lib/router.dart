@@ -48,10 +48,14 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             onPopPage: _handlePopPage,
             pages: [
               // TODO: Add Shared Z-Axis transition from search icon to search view page (Motion)
-              CustomTransitionPageBuilder(screen: const HomePage()),
+              const CustomTransitionPageBuilder(
+                transitionKey: ValueKey('Home'),
+                screen: HomePage(),
+              ),
               if (routePath is ReplySearchPath)
-                CustomTransitionPageBuilder(
-                  screen: const SearchPage(),
+                const CustomTransitionPageBuilder(
+                  transitionKey: ValueKey('Search'),
+                  screen: SearchPage(),
                 ),
             ],
           );
