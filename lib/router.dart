@@ -47,14 +47,14 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             key: navigatorKey,
             onPopPage: _handlePopPage,
             pages: [
-              SharedAxisTransitionPageWrapper(
+              const SharedAxisTransitionPageWrapper(
                 transitionKey: ValueKey('home'),
-                screen: const HomePage(),
+                screen: HomePage(),
               ),
               if (routePath is ReplySearchPath)
-                SharedAxisTransitionPageWrapper(
+                const SharedAxisTransitionPageWrapper(
                   transitionKey: ValueKey('search'),
-                  screen: const SearchPage(),
+                  screen: SearchPage(),
                 ),
             ],
           );
@@ -97,7 +97,7 @@ class ReplySearchPath extends ReplyRoutePath {
 }
 
 class SharedAxisTransitionPageWrapper extends Page {
-  SharedAxisTransitionPageWrapper(
+  const SharedAxisTransitionPageWrapper(
       {@required this.screen, @required this.transitionKey})
       : assert(screen != null),
         assert(transitionKey != null),
