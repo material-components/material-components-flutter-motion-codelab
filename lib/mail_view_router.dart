@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reply/transition_page_builder.dart';
 
 import 'home.dart';
 import 'inbox.dart';
@@ -26,11 +27,11 @@ class MailViewRouterDelegate extends RouterDelegate<void>
           onPopPage: _handlePopPage,
           pages: [
             // TODO: Add Fade through transition between mailbox pages (Motion)
-            TransitionBuilderPage(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return InboxPage(destination: currentlySelectedInbox);
-              },
-            ),
+            CustomTransitionPageBuilder(
+              screen: InboxPage(
+                destination: currentlySelectedInbox,
+              ),
+            )
           ],
         );
       },
