@@ -47,14 +47,14 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
             key: navigatorKey,
             onPopPage: _handlePopPage,
             pages: [
-              SharedAxisTransitionPageWrapper(
+              const SharedAxisTransitionPageWrapper(
                 transitionKey: ValueKey('home'),
-                screen: const HomePage(),
+                screen: HomePage(),
               ),
               if (routePath is ReplySearchPath)
-                SharedAxisTransitionPageWrapper(
+                const SharedAxisTransitionPageWrapper(
                   transitionKey: ValueKey('search'),
-                  screen: const SearchPage(),
+                  screen: SearchPage(),
                 ),
             ],
           );
@@ -96,29 +96,35 @@ class ReplySearchPath extends ReplyRoutePath {
   const ReplySearchPath();
 }
 
-class SharedAxisTransitionPageWrapper extends TransitionBuilderPage {
-  SharedAxisTransitionPageWrapper(
+// TODO: Prefer to use TransitionBuilderPage once it lands in stable.
+// https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
+class SharedAxisTransitionPageWrapper extends Page {
+  const SharedAxisTransitionPageWrapper(
       {@required this.screen, @required this.transitionKey})
       : assert(screen != null),
         assert(transitionKey != null),
-        super(
-          key: transitionKey,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SharedAxisTransition(
-              fillColor: Theme.of(context).cardColor,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.scaled,
-              child: child,
-            );
-          },
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return screen;
-          },
-        );
+        super(key: transitionKey);
 
   final Widget screen;
   final ValueKey transitionKey;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+        settings: this,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SharedAxisTransition(
+            fillColor: Theme.of(context).cardColor,
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.scaled,
+            child: child,
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return screen;
+        });
+  }
 }
 
 class ReplyRouteInformationParser
