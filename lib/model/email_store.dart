@@ -178,7 +178,7 @@ class EmailStore with ChangeNotifier {
       Map<String, Set<Email>>.unmodifiable(_categories);
 
   void deleteEmail(String category, int id) {
-    final email = _categories[category].elementAt(id);
+    final email = _categories[category]!.elementAt(id);
 
     _categories.forEach(
       (key, value) {
@@ -192,13 +192,13 @@ class EmailStore with ChangeNotifier {
   }
 
   void starEmail(String category, int id) {
-    final email = _categories[category].elementAt(id);
+    final email = _categories[category]!.elementAt(id);
     var alreadyStarred = isEmailStarred(email);
 
     if (alreadyStarred) {
-      _categories['Starred'].remove(email);
+      _categories['Starred']!.remove(email);
     } else {
-      _categories['Starred'].add(email);
+      _categories['Starred']!.add(email);
     }
 
     notifyListeners();
@@ -213,7 +213,7 @@ class EmailStore with ChangeNotifier {
   SlowMotionSpeedSetting get slowMotionSpeed => _currentSlowMotionSpeed;
 
   bool isEmailStarred(Email email) {
-    return _categories['Starred'].contains(email);
+    return _categories['Starred']!.contains(email);
   }
 
   set bottomDrawerVisible(bool value) {
