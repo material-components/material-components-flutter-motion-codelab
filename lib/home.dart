@@ -32,12 +32,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  late AnimationController _drawerController;
-  late AnimationController _dropArrowController;
-  late AnimationController _bottomAppBarController;
-  late Animation<double> _drawerCurve;
-  late Animation<double> _dropArrowCurve;
-  late Animation<double> _bottomAppBarCurve;
+  late final AnimationController _drawerController;
+  late final AnimationController _dropArrowController;
+  late final AnimationController _bottomAppBarController;
+  late final Animation<double> _drawerCurve;
+  late final Animation<double> _dropArrowCurve;
+  late final Animation<double> _bottomAppBarCurve;
 
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
   final _navigationDestinations = <_Destination>[
@@ -460,7 +460,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
           topRight: radius,
           topLeft: radius,
         );
-        late Color starIconColor;
+        late final Color starIconColor;
 
         if (onMailView) {
           var currentEmailStarred = false;
