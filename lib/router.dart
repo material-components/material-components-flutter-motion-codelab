@@ -39,8 +39,8 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
       providers: [
         ChangeNotifierProvider<RouterProvider>.value(value: replyState),
       ],
-      child: Selector<RouterProvider, ReplyRoutePath>(
-        selector: (context, routerProvider) => routerProvider.routePath!,
+      child: Selector<RouterProvider, ReplyRoutePath?>(
+        selector: (context, routerProvider) => routerProvider.routePath,
         builder: (context, routePath, child) {
           return Navigator(
             key: navigatorKey,
