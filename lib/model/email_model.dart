@@ -1,12 +1,12 @@
 class Email {
   const Email({
-    this.sender,
-    this.time,
-    this.subject,
-    this.message,
-    this.avatar,
-    this.recipients,
-    this.containsPictures,
+    required this.sender,
+    required this.time,
+    required this.subject,
+    required this.message,
+    required this.avatar,
+    required this.recipients,
+    required this.containsPictures,
   });
 
   final String sender;

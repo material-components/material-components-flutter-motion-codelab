@@ -12,9 +12,8 @@ const String _searchPageLocation = '/reply/search';
 
 class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<ReplyRoutePath> {
-  ReplyRouterDelegate({@required this.replyState})
-      : assert(replyState != null),
-        navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
+  ReplyRouterDelegate({required this.replyState})
+      : navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
     replyState.addListener(() {
       notifyListeners();
     });
@@ -32,7 +31,7 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
   }
 
   @override
-  ReplyRoutePath get currentConfiguration => replyState.routePath;
+  ReplyRoutePath get currentConfiguration => replyState.routePath!;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
       providers: [
         ChangeNotifierProvider<RouterProvider>.value(value: replyState),
       ],
-      child: Selector<RouterProvider, ReplyRoutePath>(
+      child: Selector<RouterProvider, ReplyRoutePath?>(
         selector: (context, routerProvider) => routerProvider.routePath,
         builder: (context, routePath, child) {
           return Navigator(
@@ -104,7 +103,7 @@ class ReplyRouteInformationParser
   @override
   Future<ReplyRoutePath> parseRouteInformation(
       RouteInformation routeInformation) async {
-    final url = Uri.parse(routeInformation.location);
+    final url = Uri.parse(routeInformation.location!);
 
     if (url.path == _searchPageLocation) {
       return SynchronousFuture<ReplySearchPath>(const ReplySearchPath());
@@ -114,7 +113,7 @@ class ReplyRouteInformationParser
   }
 
   @override
-  RouteInformation restoreRouteInformation(ReplyRoutePath configuration) {
+  RouteInformation? restoreRouteInformation(ReplyRoutePath configuration) {
     if (configuration is ReplyHomePath) {
       return RouteInformation(location: _homePageLocation);
     }
