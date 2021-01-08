@@ -25,13 +25,10 @@ extension ThemeModeExtension on ThemeMode {
     switch (this) {
       case ThemeMode.system:
         return 'System';
-        break;
       case ThemeMode.light:
         return 'Light';
-        break;
       case ThemeMode.dark:
         return 'Dark';
-        break;
     }
   }
 }
