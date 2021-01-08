@@ -64,19 +64,19 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
     );
 
     return StatefulBuilder(builder: (context, state) {
-      void setTheme(ThemeMode theme) {
+      void setTheme(ThemeMode? theme) {
         state(() {
-          _themeMode = theme;
+          _themeMode = theme!;
         });
-        Provider.of<EmailStore>(context, listen: false).themeMode = theme;
+        Provider.of<EmailStore>(context, listen: false).themeMode = theme!;
       }
 
-      void setSlowMotionSpeed(SlowMotionSpeedSetting slowMotionSpeed) {
+      void setSlowMotionSpeed(SlowMotionSpeedSetting? slowMotionSpeed) {
         state(() {
-          _slowMotionSpeedSetting = slowMotionSpeed;
+          _slowMotionSpeedSetting = slowMotionSpeed!;
         });
         Provider.of<EmailStore>(context, listen: false).slowMotionSpeed =
-            slowMotionSpeed;
+            slowMotionSpeed!;
       }
 
       return Container(
