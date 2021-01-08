@@ -17,7 +17,6 @@ extension AnimationSpeedSettingExtension on SlowMotionSpeedSetting {
       case SlowMotionSpeedSetting.slowest:
         return 15.0;
     }
-    return null;
   }
 }
 
@@ -26,15 +25,11 @@ extension ThemeModeExtension on ThemeMode {
     switch (this) {
       case ThemeMode.system:
         return 'System';
-        break;
       case ThemeMode.light:
         return 'Light';
-        break;
       case ThemeMode.dark:
         return 'Dark';
-        break;
     }
-    return null;
   }
 }
 
@@ -46,8 +41,8 @@ class SettingsBottomSheet extends StatefulWidget {
 }
 
 class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
-  SlowMotionSpeedSetting _slowMotionSpeedSetting;
-  ThemeMode _themeMode;
+  late SlowMotionSpeedSetting _slowMotionSpeedSetting;
+  late ThemeMode _themeMode;
 
   @override
   void initState() {
@@ -66,19 +61,19 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
     );
 
     return StatefulBuilder(builder: (context, state) {
-      void setTheme(ThemeMode theme) {
+      void setTheme(ThemeMode? theme) {
         state(() {
-          _themeMode = theme;
+          _themeMode = theme!;
         });
-        Provider.of<EmailStore>(context, listen: false).themeMode = theme;
+        Provider.of<EmailStore>(context, listen: false).themeMode = theme!;
       }
 
-      void setSlowMotionSpeed(SlowMotionSpeedSetting slowMotionSpeed) {
+      void setSlowMotionSpeed(SlowMotionSpeedSetting? slowMotionSpeed) {
         state(() {
-          _slowMotionSpeedSetting = slowMotionSpeed;
+          _slowMotionSpeedSetting = slowMotionSpeed!;
         });
         Provider.of<EmailStore>(context, listen: false).slowMotionSpeed =
-            slowMotionSpeed;
+            slowMotionSpeed!;
       }
 
       return Container(
