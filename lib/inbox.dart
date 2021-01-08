@@ -5,7 +5,7 @@ import 'mail_card_preview.dart';
 import 'model/email_store.dart';
 
 class InboxPage extends StatelessWidget {
-  const InboxPage({@required this.destination}) : assert(destination != null);
+  const InboxPage({required this.destination});
 
   final String destination;
 
@@ -17,14 +17,14 @@ class InboxPage extends StatelessWidget {
       builder: (context, model, child) {
         return SafeArea(
           bottom: false,
-          child: model.emails[destination].isEmpty
+          child: model.emails[destination]!.isEmpty
               ? Center(
                   child: Text(
                     'Empty in ${destination.toLowerCase()}',
                   ),
                 )
               : ListView.separated(
-                  itemCount: model.emails[destination].length,
+                  itemCount: model.emails[destination]!.length,
                   padding: EdgeInsetsDirectional.only(
                     start: horizontalPadding,
                     end: horizontalPadding,
@@ -36,7 +36,7 @@ class InboxPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return MailPreviewCard(
                       id: index,
-                      email: model.emails[destination].elementAt(index),
+                      email: model.emails[destination]!.elementAt(index),
                       onDelete: () => model.deleteEmail(destination, index),
                       onStar: () => model.starEmail(destination, index),
                     );

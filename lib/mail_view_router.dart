@@ -9,7 +9,7 @@ import 'model/email_store.dart';
 
 class MailViewRouterDelegate extends RouterDelegate<void>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
-  MailViewRouterDelegate({this.drawerController});
+  MailViewRouterDelegate({required this.drawerController});
 
   final AnimationController drawerController;
 
@@ -42,7 +42,7 @@ class MailViewRouterDelegate extends RouterDelegate<void>
   @override
   Future<bool> popRoute() {
     var emailStore =
-        Provider.of<EmailStore>(navigatorKey.currentContext, listen: false);
+        Provider.of<EmailStore>(navigatorKey.currentContext!, listen: false);
     bool onCompose = emailStore.onCompose;
 
     bool onMailView = emailStore.onMailView;
@@ -80,9 +80,9 @@ class MailViewRouterDelegate extends RouterDelegate<void>
     // Handles the back button press when on the MailView. If there is a route
     // to pop then pop it, and reset the currentlySelectedEmailId to -1
     // to notify listeners that we are no longer on the MailView.
-    if (navigatorKey.currentState.canPop()) {
-      navigatorKey.currentState.pop();
-      Provider.of<EmailStore>(navigatorKey.currentContext, listen: false)
+    if (navigatorKey.currentState!.canPop()) {
+      navigatorKey.currentState!.pop();
+      Provider.of<EmailStore>(navigatorKey.currentContext!, listen: false)
           .currentlySelectedEmailId = -1;
       return SynchronousFuture<bool>(true);
     }
@@ -101,11 +101,9 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 // https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
 class FadeThroughTransitionPageWrapper extends Page {
   FadeThroughTransitionPageWrapper({
-    @required this.mailbox,
-    @required this.transitionKey,
-  })  : assert(mailbox != null),
-        assert(transitionKey != null),
-        super(key: transitionKey);
+    required this.mailbox,
+    required this.transitionKey,
+  })  : super(key: transitionKey);
 
   final Widget mailbox;
   final ValueKey transitionKey;

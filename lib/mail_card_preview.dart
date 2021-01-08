@@ -10,14 +10,12 @@ import 'profile_avatar.dart';
 
 class MailPreviewCard extends StatelessWidget {
   const MailPreviewCard({
-    Key key,
-    @required this.id,
-    @required this.email,
-    @required this.onDelete,
-    @required this.onStar,
-  })  : assert(id != null),
-        assert(email != null),
-        super(key: key);
+    Key? key,
+    required this.id,
+    required this.email,
+    required this.onDelete,
+    required this.onStar,
+  })  : super(key: key);
 
   final int id;
   final Email email;
@@ -105,12 +103,10 @@ class MailPreviewCard extends StatelessWidget {
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
-    @required this.id,
-    @required this.email,
-    @required this.closedChild,
-  })  : assert(id != null),
-        assert(email != null),
-        assert(closedChild != null);
+    required this.id,
+    required this.email,
+    required this.closedChild,
+  });
 
   final int id;
   final Email email;
@@ -147,16 +143,12 @@ class _OpenContainerWrapper extends StatelessWidget {
 
 class _DismissibleContainer extends StatelessWidget {
   const _DismissibleContainer({
-    @required this.icon,
-    @required this.backgroundColor,
-    @required this.iconColor,
-    @required this.alignment,
-    @required this.padding,
-  })  : assert(icon != null),
-        assert(backgroundColor != null),
-        assert(iconColor != null),
-        assert(alignment != null),
-        assert(padding != null);
+    required this.icon,
+    required this.backgroundColor,
+    required this.iconColor,
+    required this.alignment,
+    required this.padding,
+  });
 
   final String icon;
   final Color backgroundColor;
@@ -189,17 +181,16 @@ class _DismissibleContainer extends StatelessWidget {
 
 class _MailPreview extends StatelessWidget {
   const _MailPreview({
-    @required this.id,
-    @required this.email,
+    required this.id,
+    required this.email,
     this.onStar,
     this.onDelete,
-  })  : assert(id != null),
-        assert(email != null);
+  });
 
   final int id;
   final Email email;
-  final VoidCallback onStar;
-  final VoidCallback onDelete;
+  final VoidCallback? onStar;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -304,16 +295,16 @@ class _PicturePreview extends StatelessWidget {
 
 class _MailPreviewActionBar extends StatelessWidget {
   const _MailPreviewActionBar({
-    @required this.avatar,
-    this.isStarred,
+    required this.avatar,
+    required this.isStarred,
     this.onStar,
     this.onDelete,
-  }) : assert(avatar != null);
+  });
 
   final String avatar;
   final bool isStarred;
-  final VoidCallback onStar;
-  final VoidCallback onDelete;
+  final VoidCallback? onStar;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
