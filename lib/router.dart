@@ -77,7 +77,6 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
 
   @override
   Future<void> setNewRoutePath(ReplyRoutePath configuration) {
-    assert(configuration != null);
     replyState.routePath = configuration;
     return SynchronousFuture<void>(null);
   }
