@@ -460,7 +460,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
           topRight: radius,
           topLeft: radius,
         );
-        late final Color starIconColor;
+        Color? starIconColor;
 
         if (onMailView) {
           var currentEmailStarred = false;
