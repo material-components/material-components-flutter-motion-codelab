@@ -16,4 +16,4 @@ running `git checkout complete`.
 
 | Android | iOS |
 |----|----|
-| <img src="screenshots/reply-transitions-android.gif" alt="Reply transitions for Android" width="720" height="1080"/> | <img src="screenshots/reply-transitions-iOS.gif" alt="Reply transitions for iOS" width="720" height="1080"/> |
+|![Reply transitions for Android](screenshots/reply-transitions-android.gif) |![Reply transitions for iOS](screenshots/reply-transitions-iOS.gif)|
