@@ -18,7 +18,7 @@ class _ReplyAppState extends State<ReplyApp> {
   final RouterProvider _replyState = RouterProvider();
   final ReplyRouteInformationParser _routeInformationParser =
       ReplyRouteInformationParser();
-  ReplyRouterDelegate _routerDelegate;
+  late final ReplyRouterDelegate _routerDelegate;
 
   @override
   void initState() {
@@ -134,12 +134,12 @@ ChipThemeData _buildChipTheme(
     secondarySelectedColor: chipBackground,
     padding: const EdgeInsets.all(4),
     shape: const StadiumBorder(),
-    labelStyle: GoogleFonts.workSansTextTheme().bodyText2.copyWith(
+    labelStyle: GoogleFonts.workSansTextTheme().bodyText2!.copyWith(
           color: brightness == Brightness.dark
               ? ReplyColors.white50
               : ReplyColors.black900,
         ),
-    secondaryLabelStyle: GoogleFonts.workSansTextTheme().bodyText2,
+    secondaryLabelStyle: GoogleFonts.workSansTextTheme().bodyText2!,
     brightness: brightness,
   );
 }

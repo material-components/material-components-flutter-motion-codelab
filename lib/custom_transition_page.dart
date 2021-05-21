@@ -8,10 +8,8 @@ class CustomTransitionPage extends Page {
   final ValueKey transitionKey;
 
   const CustomTransitionPage(
-      {@required this.screen, @required this.transitionKey})
-      : assert(screen != null),
-        assert(transitionKey != null),
-        super(key: transitionKey);
+      {required this.screen, required this.transitionKey})
+      : super(key: transitionKey);
 
   @override
   Route createRoute(BuildContext context) {

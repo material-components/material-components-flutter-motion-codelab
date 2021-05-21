@@ -4,11 +4,11 @@ import 'colors.dart';
 
 class BottomDrawer extends StatelessWidget {
   const BottomDrawer({
-    Key key,
-    this.onVerticalDragUpdate,
-    this.onVerticalDragEnd,
-    this.leading,
-    this.trailing,
+    Key? key,
+    required this.onVerticalDragUpdate,
+    required this.onVerticalDragEnd,
+    required this.leading,
+    required this.trailing,
   }) : super(key: key);
 
   final GestureDragUpdateCallback onVerticalDragUpdate;
@@ -48,7 +48,7 @@ class BottomDrawer extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(start: 18),
               child: Text(
                 'FOLDERS',
-                style: theme.textTheme.caption.copyWith(
+                style: theme.textTheme.caption!.copyWith(
                   color: ReplyColors.white50.withOpacity(0.64),
                 ),
               ),
