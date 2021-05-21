@@ -32,12 +32,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  AnimationController _drawerController;
-  AnimationController _dropArrowController;
-  AnimationController _bottomAppBarController;
-  Animation<double> _drawerCurve;
-  Animation<double> _dropArrowCurve;
-  Animation<double> _bottomAppBarCurve;
+  late final AnimationController _drawerController;
+  late final AnimationController _dropArrowController;
+  late final AnimationController _bottomAppBarController;
+  late final Animation<double> _drawerCurve;
+  late final Animation<double> _dropArrowCurve;
+  late final Animation<double> _bottomAppBarCurve;
 
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
   final _navigationDestinations = <_Destination>[
@@ -188,12 +188,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   double get _bottomDrawerHeight {
     final renderBox =
-        _bottomDrawerKey.currentContext.findRenderObject() as RenderBox;
+        _bottomDrawerKey.currentContext!.findRenderObject() as RenderBox;
     return renderBox.size.height;
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
-    _drawerController.value -= details.primaryDelta / _bottomDrawerHeight;
+    _drawerController.value -= details.primaryDelta! / _bottomDrawerHeight;
   }
 
   void _handleDragEnd(DragEndDetails details) {
@@ -331,12 +331,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 class _AnimatedBottomAppBar extends StatelessWidget {
   const _AnimatedBottomAppBar({
-    this.bottomAppBarController,
-    this.bottomAppBarCurve,
-    this.bottomDrawerVisible,
-    this.drawerController,
-    this.dropArrowCurve,
-    this.toggleBottomDrawerVisibility,
+    required this.bottomAppBarController,
+    required this.bottomAppBarCurve,
+    required this.bottomDrawerVisible,
+    required this.drawerController,
+    required this.dropArrowCurve,
+    required this.toggleBottomDrawerVisibility,
   });
 
   final AnimationController bottomAppBarController;
@@ -409,7 +409,7 @@ class _AnimatedBottomAppBar extends StatelessWidget {
                                           currentlySelectedInbox,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1
+                                              .bodyText1!
                                               .copyWith(
                                                 color: ReplyColors.white50,
                                               ),
@@ -443,10 +443,9 @@ class _AnimatedBottomAppBar extends StatelessWidget {
 
 class _BottomAppBarActionItems extends StatelessWidget {
   const _BottomAppBarActionItems({
-    @required this.drawerController,
-    @required this.drawerVisible,
-  })  : assert(drawerVisible != null),
-        assert(drawerController != null);
+    required this.drawerController,
+    required this.drawerVisible,
+  });
 
   final AnimationController drawerController;
   final bool drawerVisible;
@@ -461,14 +460,14 @@ class _BottomAppBarActionItems extends StatelessWidget {
           topRight: radius,
           topLeft: radius,
         );
-        Color starIconColor;
+        Color? starIconColor;
 
         if (onMailView) {
           var currentEmailStarred = false;
 
-          if (model.emails[model.currentlySelectedInbox].isNotEmpty) {
+          if (model.emails[model.currentlySelectedInbox]!.isNotEmpty) {
             currentEmailStarred = model.isEmailStarred(
-              model.emails[model.currentlySelectedInbox]
+              model.emails[model.currentlySelectedInbox]!
                   .elementAt(model.currentlySelectedEmailId),
             );
           }
@@ -518,7 +517,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                               model.currentlySelectedEmailId,
                             );
                             if (model.currentlySelectedInbox == 'Starred') {
-                              mobileMailNavKey.currentState.pop();
+                              mobileMailNavKey.currentState!.pop();
                               model.currentlySelectedEmailId = -1;
                             }
                           },
@@ -537,7 +536,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                               model.currentlySelectedEmailId,
                             );
 
-                            mobileMailNavKey.currentState.pop();
+                            mobileMailNavKey.currentState!.pop();
                             model.currentlySelectedEmailId = -1;
                           },
                           color: ReplyColors.white50,
@@ -570,14 +569,11 @@ class _BottomAppBarActionItems extends StatelessWidget {
 
 class _BottomDrawerDestinations extends StatelessWidget {
   _BottomDrawerDestinations({
-    @required this.destinations,
-    @required this.drawerController,
-    @required this.dropArrowController,
-    @required this.onItemTapped,
-  })  : assert(destinations != null),
-        assert(drawerController != null),
-        assert(dropArrowController != null),
-        assert(onItemTapped != null);
+    required this.destinations,
+    required this.drawerController,
+    required this.dropArrowController,
+    required this.onItemTapped,
+  });
 
   final List<_Destination> destinations;
   final AnimationController drawerController;
@@ -613,7 +609,7 @@ class _BottomDrawerDestinations extends StatelessWidget {
                   ),
                   title: Text(
                     destination.name,
-                    style: theme.textTheme.bodyText2.copyWith(
+                    style: theme.textTheme.bodyText2!.copyWith(
                       color: destination.name == currentlySelectedInbox
                           ? theme.colorScheme.secondary
                           : ReplyColors.white50.withOpacity(0.64),
@@ -630,12 +626,10 @@ class _BottomDrawerDestinations extends StatelessWidget {
 
 class _Destination {
   const _Destination({
-    @required this.name,
-    @required this.icon,
-    @required this.index,
-  })  : assert(name != null),
-        assert(icon != null),
-        assert(index != null);
+    required this.name,
+    required this.icon,
+    required this.index,
+  });
 
   final String name;
   final String icon;
@@ -643,8 +637,7 @@ class _Destination {
 }
 
 class _BottomDrawerFolderSection extends StatelessWidget {
-  const _BottomDrawerFolderSection({@required this.folders})
-      : assert(folders != null);
+  const _BottomDrawerFolderSection({required this.folders});
 
   final Map<String, String> folders;
 
@@ -660,14 +653,14 @@ class _BottomDrawerFolderSection extends StatelessWidget {
             child: ListTile(
               leading: ImageIcon(
                 AssetImage(
-                  folders[folder],
+                  folders[folder]!,
                   package: _assetsPackage,
                 ),
                 color: ReplyColors.white50.withOpacity(0.64),
               ),
               title: Text(
                 folder,
-                style: theme.textTheme.bodyText2.copyWith(
+                style: theme.textTheme.bodyText2!.copyWith(
                   color: ReplyColors.white50.withOpacity(0.64),
                 ),
               ),
@@ -679,7 +672,7 @@ class _BottomDrawerFolderSection extends StatelessWidget {
 }
 
 class _MailRouter extends StatelessWidget {
-  const _MailRouter({this.drawerController});
+  const _MailRouter({required this.drawerController});
 
   final AnimationController drawerController;
 
@@ -698,7 +691,7 @@ class _MailRouter extends StatelessWidget {
 }
 
 class _ReplyLogo extends StatelessWidget {
-  const _ReplyLogo({Key key}) : super(key: key);
+  const _ReplyLogo({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -794,10 +787,9 @@ class _ReplyFabState extends State<_ReplyFab>
 
 class _FadeThroughTransitionSwitcher extends StatelessWidget {
   const _FadeThroughTransitionSwitcher({
-    @required this.fillColor,
-    @required this.child,
-  })  : assert(fillColor != null),
-        assert(child != null);
+    required this.fillColor,
+    required this.child,
+  });
 
   final Widget child;
   final Color fillColor;

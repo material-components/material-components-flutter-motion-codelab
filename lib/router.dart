@@ -12,9 +12,8 @@ const String _searchPageLocation = '/reply/search';
 
 class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<ReplyRoutePath> {
-  ReplyRouterDelegate({@required this.replyState})
-      : assert(replyState != null),
-        navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
+  ReplyRouterDelegate({required this.replyState})
+      : navigatorKey = GlobalObjectKey<NavigatorState>(replyState) {
     replyState.addListener(() {
       notifyListeners();
     });
@@ -32,7 +31,7 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
   }
 
   @override
-  ReplyRoutePath get currentConfiguration => replyState.routePath;
+  ReplyRoutePath get currentConfiguration => replyState.routePath!;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
       providers: [
         ChangeNotifierProvider<RouterProvider>.value(value: replyState),
       ],
-      child: Selector<RouterProvider, ReplyRoutePath>(
+      child: Selector<RouterProvider, ReplyRoutePath?>(
         selector: (context, routerProvider) => routerProvider.routePath,
         builder: (context, routePath, child) {
           return Navigator(
@@ -77,7 +76,6 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
 
   @override
   Future<void> setNewRoutePath(ReplyRoutePath configuration) {
-    assert(configuration != null);
     replyState.routePath = configuration;
     return SynchronousFuture<void>(null);
   }
@@ -100,10 +98,8 @@ class ReplySearchPath extends ReplyRoutePath {
 // https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
 class SharedAxisTransitionPageWrapper extends Page {
   const SharedAxisTransitionPageWrapper(
-      {@required this.screen, @required this.transitionKey})
-      : assert(screen != null),
-        assert(transitionKey != null),
-        super(key: transitionKey);
+      {required this.screen, required this.transitionKey})
+      : super(key: transitionKey);
 
   final Widget screen;
   final ValueKey transitionKey;
@@ -132,7 +128,7 @@ class ReplyRouteInformationParser
   @override
   Future<ReplyRoutePath> parseRouteInformation(
       RouteInformation routeInformation) async {
-    final url = Uri.parse(routeInformation.location);
+    final url = Uri.parse(routeInformation.location!);
 
     if (url.path == _searchPageLocation) {
       return SynchronousFuture<ReplySearchPath>(const ReplySearchPath());
@@ -142,7 +138,7 @@ class ReplyRouteInformationParser
   }
 
   @override
-  RouteInformation restoreRouteInformation(ReplyRoutePath configuration) {
+  RouteInformation? restoreRouteInformation(ReplyRoutePath configuration) {
     if (configuration is ReplyHomePath) {
       return RouteInformation(location: _homePageLocation);
     }
