@@ -5,13 +5,13 @@ import 'mail_card_preview.dart';
 import 'model/email_store.dart';
 
 class InboxPage extends StatelessWidget {
-  const InboxPage({required this.destination});
+  const InboxPage({required this.destination, Key? key}) : super(key: key);
 
   final String destination;
 
   @override
   Widget build(BuildContext context) {
-    final horizontalPadding = 4.0;
+    const horizontalPadding = 4.0;
 
     return Consumer<EmailStore>(
       builder: (context, model, child) {
@@ -25,7 +25,7 @@ class InboxPage extends StatelessWidget {
                 )
               : ListView.separated(
                   itemCount: model.emails[destination]!.length,
-                  padding: EdgeInsetsDirectional.only(
+                  padding: const EdgeInsetsDirectional.only(
                     start: horizontalPadding,
                     end: horizontalPadding,
                     bottom: kToolbarHeight,
