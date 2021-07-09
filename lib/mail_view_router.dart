@@ -100,10 +100,10 @@ class MailViewRouterDelegate extends RouterDelegate<void>
 // TODO: Prefer to use TransitionBuilderPage once it lands in stable.
 // https://github.com/material-components/material-components-flutter-motion-codelab/issues/32
 class FadeThroughTransitionPageWrapper extends Page {
-  FadeThroughTransitionPageWrapper({
+  const FadeThroughTransitionPageWrapper({
     required this.mailbox,
     required this.transitionKey,
-  })  : super(key: transitionKey);
+  }) : super(key: transitionKey);
 
   final Widget mailbox;
   final ValueKey transitionKey;

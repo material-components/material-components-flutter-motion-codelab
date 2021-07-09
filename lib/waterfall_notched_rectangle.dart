@@ -70,7 +70,9 @@ class WaterfallNotchedRectangle extends NotchedShape {
     p[5] = Offset(-1.0 * p[0]!.dx, p[0]!.dy);
 
     // translate all points back to the absolute coordinate system.
-    for (int i = 0; i < p.length; i += 1) p[i] = p[i]! + guest.center;
+    for (int i = 0; i < p.length; i += 1) {
+      p[i] = p[i]! + guest.center;
+    }
 
     return Path()
       ..moveTo(host.left, host.top)

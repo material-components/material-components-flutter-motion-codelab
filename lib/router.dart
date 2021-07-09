@@ -140,10 +140,10 @@ class ReplyRouteInformationParser
   @override
   RouteInformation? restoreRouteInformation(ReplyRoutePath configuration) {
     if (configuration is ReplyHomePath) {
-      return RouteInformation(location: _homePageLocation);
+      return const RouteInformation(location: _homePageLocation);
     }
     if (configuration is ReplySearchPath) {
-      return RouteInformation(location: _searchPageLocation);
+      return const RouteInformation(location: _searchPageLocation);
     }
     return null;
   }

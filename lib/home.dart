@@ -25,7 +25,7 @@ const double _kFlingVelocity = 2.0;
 const _kAnimationDuration = Duration(milliseconds: 300);
 
 class HomePage extends StatefulWidget {
-  const HomePage();
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final Animation<double> _bottomAppBarCurve;
 
   final _bottomDrawerKey = GlobalKey(debugLabel: 'Bottom Drawer');
-  final _navigationDestinations = <_Destination>[
+  final _navigationDestinations = const <_Destination>[
     _Destination(
       name: 'Inbox',
       icon: '$_iconAssetLocation/twotone_inbox.png',
@@ -455,7 +455,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
     return Consumer<EmailStore>(
       builder: (context, model, child) {
         final onMailView = model.onMailView;
-        var radius = Radius.circular(12);
+        var radius = const Radius.circular(12);
         final modalBorder = BorderRadius.only(
           topRight: radius,
           topLeft: radius,
@@ -557,7 +557,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
                           Provider.of<RouterProvider>(
                             context,
                             listen: false,
-                          ).routePath = ReplySearchPath();
+                          ).routePath = const ReplySearchPath();
                         },
                       ),
                     ),
@@ -568,7 +568,7 @@ class _BottomAppBarActionItems extends StatelessWidget {
 }
 
 class _BottomDrawerDestinations extends StatelessWidget {
-  _BottomDrawerDestinations({
+  const _BottomDrawerDestinations({
     required this.destinations,
     required this.drawerController,
     required this.dropArrowController,
@@ -723,7 +723,7 @@ class _ReplyFabState extends State<_ReplyFab>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final circleFabBorder = const CircleBorder();
+    const circleFabBorder = CircleBorder();
 
     return Selector<EmailStore, bool>(
       selector: (context, emailStore) => emailStore.onMailView,
