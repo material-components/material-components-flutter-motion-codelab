@@ -8,7 +8,7 @@ import 'model/email_store.dart';
 import 'model/router_provider.dart';
 
 class ReplyApp extends StatefulWidget {
-  const ReplyApp();
+  const ReplyApp({Key? key}) : super(key: key);
 
   @override
   _ReplyAppState createState() => _ReplyAppState();
