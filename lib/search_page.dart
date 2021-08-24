@@ -4,7 +4,7 @@ import 'package:reply/model/router_provider.dart';
 import 'package:reply/router.dart';
 
 class SearchPage extends StatelessWidget {
-  const SearchPage();
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class SearchPage extends StatelessWidget {
                         Provider.of<RouterProvider>(
                           context,
                           listen: false,
-                        ).routePath = ReplyHomePath();
+                        ).routePath = const ReplyHomePath();
                       },
                     ),
                     const Expanded(

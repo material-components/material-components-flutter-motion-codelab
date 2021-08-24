@@ -34,7 +34,7 @@ extension ThemeModeExtension on ThemeMode {
 }
 
 class SettingsBottomSheet extends StatefulWidget {
-  const SettingsBottomSheet();
+  const SettingsBottomSheet({Key? key}) : super(key: key);
 
   @override
   _SettingsBottomSheetState createState() => _SettingsBottomSheetState();
@@ -54,7 +54,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    var radius = Radius.circular(12);
+    var radius = const Radius.circular(12);
     final modalBorder = BorderRadius.only(
       topRight: radius,
       topLeft: radius,
@@ -85,7 +85,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
           child: Column(
             children: [
               ExpansionTile(
-                title: Text('Theme'),
+                title: const Text('Theme'),
                 children: [
                   for (var themeMode in ThemeMode.values)
                     RadioListTile(
@@ -97,7 +97,7 @@ class _SettingsBottomSheetState extends State<SettingsBottomSheet> {
                 ],
               ),
               ExpansionTile(
-                title: Text('Slow Motion'),
+                title: const Text('Slow Motion'),
                 children: [
                   for (var animationSpeed in SlowMotionSpeedSetting.values)
                     RadioListTile(
