@@ -15,7 +15,7 @@ class ReplyApp extends StatefulWidget {
 }
 
 class _ReplyAppState extends State<ReplyApp> {
-  final RouterProvider _replyState = RouterProvider();
+  final RouterProvider _replyState = RouterProvider(const ReplyHomePath());
   final ReplyRouteInformationParser _routeInformationParser =
       ReplyRouteInformationParser();
   late final ReplyRouterDelegate _routerDelegate;

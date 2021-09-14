@@ -31,7 +31,7 @@ class ReplyRouterDelegate extends RouterDelegate<ReplyRoutePath>
   }
 
   @override
-  ReplyRoutePath get currentConfiguration => replyState.routePath!;
+  ReplyRoutePath get currentConfiguration => replyState.routePath;
 
   @override
   Widget build(BuildContext context) {
